@@ -17,24 +17,12 @@ export function CopyButton({ value, label = 'Copy', className = '' }: CopyButton
   }, [copied]);
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-    } catch {
-      setCopied(true);
-    }
+    try { await navigator.clipboard.writeText(value); setCopied(true); } catch { setCopied(true); }
   };
 
   return (
-    <button
-      onClick={handleCopy}
-      className={`flex items-center gap-2 font-medium transition-all active:scale-95 ${className}`}
-    >
-      {copied ? (
-        <Check className="h-4 w-4 text-nova-success" />
-      ) : (
-        <Copy className="h-4 w-4" />
-      )}
+    <button onClick={handleCopy} className={`flex items-center gap-2 font-medium transition-all active:scale-95 ${className}`}>
+      {copied ? <Check className="h-4 w-4 text-nova-success" /> : <Copy className="h-4 w-4" />}
       {copied ? 'Copied' : label}
     </button>
   );

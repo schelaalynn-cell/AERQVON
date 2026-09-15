@@ -11,14 +11,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary:
-    'bg-nova-accent text-white hover:bg-nova-accent/90 active:scale-[0.97] shadow-glow',
-  secondary:
-    'bg-nova-surface-2 text-nova-text border border-nova-border hover:bg-nova-surface-3 active:scale-[0.97]',
-  ghost:
-    'bg-transparent text-nova-accent hover:bg-nova-surface-2 active:scale-[0.97]',
-  danger:
-    'bg-nova-error/15 text-nova-error border border-nova-error/30 hover:bg-nova-error/25 active:scale-[0.97]',
+  primary: 'bg-nova-accent text-white hover:bg-nova-accent/90 active:scale-[0.97] shadow-glow',
+  secondary: 'bg-nova-surface-2 text-nova-text border border-nova-border hover:bg-nova-surface-3 active:scale-[0.97]',
+  ghost: 'bg-transparent text-nova-accent hover:bg-nova-surface-2 active:scale-[0.97]',
+  danger: 'bg-nova-error/15 text-nova-error border border-nova-error/30 hover:bg-nova-error/25 active:scale-[0.97]',
 };
 
 const sizes: Record<Size, string> = {

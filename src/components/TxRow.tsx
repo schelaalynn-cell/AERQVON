@@ -10,7 +10,6 @@ interface TxRowProps {
 export function TxRow({ tx, onClick }: TxRowProps) {
   const isIn = tx.direction === 'in';
   const isSwap = tx.direction === 'swap';
-  const positive = isIn || (isSwap && false);
 
   const Icon = isSwap ? ArrowLeftRight : isIn ? ArrowDownLeft : ArrowUpRight;
   const iconBg = isSwap
@@ -22,11 +21,7 @@ export function TxRow({ tx, onClick }: TxRowProps) {
   const StatusIcon =
     tx.status === 'pending' ? Clock : tx.status === 'completed' ? CheckCircle2 : XCircle;
   const statusColor =
-    tx.status === 'pending'
-      ? 'text-nova-warning'
-      : tx.status === 'completed'
-      ? 'text-nova-success'
-      : 'text-nova-error';
+    tx.status === 'pending' ? 'text-nova-warning' : tx.status === 'completed' ? 'text-nova-success' : 'text-nova-error';
 
   return (
     <button
@@ -38,9 +33,7 @@ export function TxRow({ tx, onClick }: TxRowProps) {
       </div>
       <div className="min-w-0 flex-1 text-left">
         <div className="flex items-center gap-2">
-          <span className="font-medium">
-            {isSwap ? 'Swap' : isIn ? 'Received' : 'Sent'}
-          </span>
+          <span className="font-medium">{isSwap ? 'Swap' : isIn ? 'Received' : 'Sent'}</span>
           <span className="text-xs text-nova-muted">{tx.assetSymbol}</span>
         </div>
         <div className="flex items-center gap-1.5 text-xs text-nova-muted">
@@ -51,13 +44,10 @@ export function TxRow({ tx, onClick }: TxRowProps) {
       </div>
       <div className="text-right">
         <div className={`font-semibold ${isIn ? 'text-nova-success' : ''}`}>
-          {isIn ? '+' : '-'}
-          {marketService.formatAmount(tx.amount, 4)} {tx.assetSymbol}
+          {isIn ? '+' : '-'}{marketService.formatAmount(tx.amount, 4)} {tx.assetSymbol}
         </div>
         {isSwap && tx.swapToAmount && (
-          <div className="text-xs text-nova-success">
-            +{marketService.formatAmount(tx.swapToAmount, 4)} {tx.swapTo}
-          </div>
+          <div className="text-xs text-nova-success">+{marketService.formatAmount(tx.swapToAmount, 4)} {tx.swapTo}</div>
         )}
       </div>
     </button>
