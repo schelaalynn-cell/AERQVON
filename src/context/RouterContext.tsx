@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-export type TabId = 'home' | 'wallet' | 'swap' | 'activity' | 'settings';
+export type TabId = 'home' | 'markets' | 'trade' | 'wallet' | 'settings';
 export type Route =
   | { name: 'tab'; tab: TabId }
   | { name: 'asset'; assetId: string }
@@ -8,8 +8,8 @@ export type Route =
   | { name: 'send'; assetId?: string }
   | { name: 'swap-detail' }
   | { name: 'transaction'; txId: string }
-  | { name: 'onboarding' }
-  | { name: 'settings-section'; section: string };
+  | { name: 'activity' }
+  | { name: 'onboarding' };
 
 interface RouterValue {
   route: Route;
@@ -42,7 +42,6 @@ export function RouterProvider({ children }: { children: ReactNode }) {
 
   const canGoBack = history.length > 1;
 
-  // Handle browser back button
   useEffect(() => {
     const handler = (e: PopStateEvent) => {
       e.preventDefault();
