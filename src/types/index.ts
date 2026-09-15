@@ -1,6 +1,6 @@
-export type NetworkId = 'TON' | 'BTC' | 'ETH';
-export type AssetId = 'GRAM' | 'USDT' | 'BTC' | 'ETH';
-export type AssetType = 'native' | 'jetton' | 'simulated';
+export type NetworkId = 'TON' | 'BTC' | 'ETH' | 'SOL' | 'BSC';
+export type AssetId = 'GRAM' | 'USDT' | 'BTC' | 'ETH' | 'AQV' | 'BNB' | 'USDC';
+export type AssetType = 'native' | 'jetton' | 'simulated' | 'spl' | 'bep20' | 'erc20';
 
 export interface Network {
   id: NetworkId;
@@ -22,6 +22,8 @@ export interface Asset {
   color: string;
   priceUsd: number;
   change24h: number;
+  launchStatus?: 'live' | 'pre-launch';
+  officialMintAddress?: string;
 }
 
 export interface Balance {
@@ -85,7 +87,7 @@ export interface AppNotification {
   read: boolean;
 }
 
-export interface TelegramUser {
+export interface AppUser {
   id: number;
   firstName: string;
   lastName?: string;
@@ -101,6 +103,124 @@ export interface PortfolioSummary {
   change24hPct: number;
 }
 
+export type TradingMode = 'cex' | 'dex';
+
+export interface LockedBalance {
+  assetId: AssetId;
+  amount: number;
+  reason: string;
+}
+
+export interface TradeHistoryEntry {
+  id: string;
+  pairSymbol: string;
+  side: OrderSide;
+  type: OrderType;
+  price: number;
+  amount: number;
+  total: number;
+  fee: number;
+  feeAsset: AssetId;
+  timestamp: number;
+  mode: TradingMode;
+}
+
+export interface DexRoute {
+  path: AssetId[];
+  hops: number;
+  pools: string[];
+  estimatedOutput: number;
+  priceImpact: number;
+}
+
+export interface DexQuote {
+  fromAssetId: AssetId;
+  toAssetId: AssetId;
+  fromAmount: number;
+  toAmount: number;
+  exchangeRate: number;
+  route: DexRoute;
+  priceImpact: number;
+  slippage: number;
+  minReceived: number;
+  networkFee: number;
+  feeAsset: AssetId;
+  liquidityUsd: number;
+}
+
+export interface LiquidityPool {
+  id: string;
+  token0: AssetId;
+  token1: AssetId;
+  reserve0: number;
+  reserve1: number;
+  totalLiquidityUsd: number;
+  apr: number;
+  fee: number;
+}
+
+export type DexTxStatus = 'idle' | 'preparing' | 'pending' | 'confirmed' | 'failed';
+
+export interface DexTransaction {
+  id: string;
+  fromAssetId: AssetId;
+  toAssetId: AssetId;
+  fromAmount: number;
+  toAmount: number;
+  route: DexRoute;
+  status: DexTxStatus;
+  timestamp: number;
+  networkFee: number;
+  slippage: number;
+  minReceived: number;
+}
+
 export type Currency = 'USD' | 'EUR' | 'RUB';
 export type Language = 'en' | 'ru';
 export type ThemeMode = 'dark' | 'light' | 'system';
+
+export type OrderSide = 'buy' | 'sell';
+export type OrderType = 'market' | 'limit';
+export type OrderStatus = 'open' | 'filled' | 'cancelled' | 'partial';
+
+export interface TradingPair {
+  symbol: string;
+  baseAsset: AssetId;
+  quoteAsset: AssetId;
+  baseLabel: string;
+  quoteLabel: string;
+  lastPrice: number;
+  change24h: number;
+  high24h: number;
+  low24h: number;
+  volume24h: number;
+  status: 'live' | 'pre-launch' | 'demo';
+}
+
+export interface Order {
+  id: string;
+  pairSymbol: string;
+  side: OrderSide;
+  type: OrderType;
+  price: number;
+  amount: number;
+  total: number;
+  fee: number;
+  feeAsset: AssetId;
+  status: OrderStatus;
+  source: 'web';
+  filledPrice?: number;
+  filledAmount?: number;
+  realizedPnl?: number;
+  createdAt: number;
+  filledAt?: number;
+}
+
+export interface Candlestick {
+  timestamp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
