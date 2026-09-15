@@ -1,7 +1,7 @@
-import { Home, Wallet, ArrowLeftRight, Activity, Settings } from 'lucide-react';
+import { Home, TrendingUp, CandlestickChart, Wallet, Settings } from 'lucide-react';
 import type { TabId } from '@/context/RouterContext';
 import { useRouter } from '@/context/RouterContext';
-import { useTelegram } from '@/hooks/useTelegram';
+import { useUi } from '@/hooks/useUi';
 import type { ComponentType } from 'react';
 
 interface TabConfig {
@@ -12,15 +12,15 @@ interface TabConfig {
 
 const TABS: TabConfig[] = [
   { id: 'home', label: 'Home', icon: Home },
+  { id: 'markets', label: 'Markets', icon: TrendingUp },
+  { id: 'trade', label: 'Trade', icon: CandlestickChart },
   { id: 'wallet', label: 'Wallet', icon: Wallet },
-  { id: 'swap', label: 'Swap', icon: ArrowLeftRight },
-  { id: 'activity', label: 'Activity', icon: Activity },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
 export function BottomNav() {
   const { tab, setTab } = useRouter();
-  const { hapticSelection } = useTelegram();
+  const { hapticSelection } = useUi();
 
   const handleTabChange = (id: TabId) => {
     if (id === tab) return;

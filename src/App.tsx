@@ -1,25 +1,26 @@
 import { useEffect } from 'react';
 import { AppProvider } from '@/context/AppContext';
 import { RouterProvider, useRouter } from '@/context/RouterContext';
-import { useTelegram } from '@/hooks/useTelegram';
+import { useUi } from '@/hooks/useUi';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useTheme } from '@/hooks/useTheme';
-import { telegramService } from '@/services/telegramService';
 import { BottomNav } from '@/components/BottomNav';
 import { Onboarding } from '@/screens/Onboarding';
 import { HomeScreen } from '@/screens/HomeScreen';
+import { MarketsScreen } from '@/screens/MarketsScreen';
+import { TradeScreen } from '@/screens/TradeScreen';
 import { WalletScreen } from '@/screens/WalletScreen';
-import { SwapScreen } from '@/screens/SwapScreen';
-import { ActivityScreen } from '@/screens/ActivityScreen';
 import { SettingsScreen } from '@/screens/SettingsScreen';
 import { AssetDetailScreen } from '@/screens/AssetDetailScreen';
 import { ReceiveScreen } from '@/screens/ReceiveScreen';
 import { SendScreen } from '@/screens/SendScreen';
+import { SwapScreen } from '@/screens/SwapScreen';
+import { ActivityScreen } from '@/screens/ActivityScreen';
 import { TransactionDetailScreen } from '@/screens/TransactionDetailScreen';
 
 function ScreenRouter() {
-  const { route, navigate, goBack, canGoBack } = useRouter();
-  const { showBackButton, hideBackButton } = useTelegram();
+  const { route, goBack, canGoBack } = useRouter();
+  const { showBackButton, hideBackButton } = useUi();
 
   useEffect(() => {
     if (canGoBack && route.name !== 'tab') {
@@ -35,12 +36,12 @@ function ScreenRouter() {
       switch (route.tab) {
         case 'home':
           return <HomeScreen />;
+        case 'markets':
+          return <MarketsScreen />;
+        case 'trade':
+          return <TradeScreen />;
         case 'wallet':
           return <WalletScreen />;
-        case 'swap':
-          return <SwapScreen />;
-        case 'activity':
-          return <ActivityScreen />;
         case 'settings':
           return <SettingsScreen />;
       }
@@ -51,8 +52,12 @@ function ScreenRouter() {
       return <ReceiveScreen assetId={route.assetId} />;
     case 'send':
       return <SendScreen assetId={route.assetId} />;
+    case 'swap-detail':
+      return <SwapScreen />;
     case 'transaction':
       return <TransactionDetailScreen txId={route.txId} />;
+    case 'activity':
+      return <ActivityScreen />;
     case 'onboarding':
       return null;
     default:
@@ -81,11 +86,6 @@ function AppContent() {
 
 function App() {
   useTheme();
-  const { available } = useTelegram();
-
-  useEffect(() => {
-    telegramService.init();
-  }, []);
 
   return (
     <RouterProvider>

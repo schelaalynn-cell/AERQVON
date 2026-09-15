@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from '@/context/RouterContext';
-import { useTelegram } from '@/hooks/useTelegram';
+import { useUi } from '@/hooks/useUi';
 
 interface ScreenHeaderProps {
   title: string;
@@ -12,7 +12,7 @@ interface ScreenHeaderProps {
 
 export function ScreenHeader({ title, subtitle, right, showBack = true }: ScreenHeaderProps) {
   const { canGoBack, goBack } = useRouter();
-  const { haptic } = useTelegram();
+  const { haptic } = useUi();
 
   const handleBack = () => {
     haptic('light');
