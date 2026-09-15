@@ -2,9 +2,6 @@
  * Central application configuration for AERQVON.
  * Demo mode is the default and must be explicitly disabled.
  * Never put secrets here — this file is bundled into the frontend.
- *
- * SECURITY: Real fund transfers are gated behind the SECURITY_REVIEW_PASSED flag.
- * This flag must NOT be set to true until the full security review is complete.
  */
 
 function parseBoolean(value: string | undefined, fallback: boolean): boolean {

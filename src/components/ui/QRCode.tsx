@@ -5,8 +5,6 @@ interface QRCodeProps {
   size?: number;
 }
 
-// Lightweight QR code generator (no external dependency)
-// Implements a compact QR Code generator following the standard
 export function QRCode({ value, size = 220 }: QRCodeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [error, setError] = useState(false);
@@ -62,9 +60,6 @@ function drawMatrix(canvas: HTMLCanvasElement, matrix: number[][], size: number)
   }
 }
 
-// --- Minimal QR Code generation (byte mode, version auto-selected) ---
-// Based on the QR code specification. Supports byte encoding with error correction level L.
-
 const EC_LEVEL_L = 0;
 
 function generateQRMatrix(text: string): number[][] {
@@ -75,7 +70,6 @@ function generateQRMatrix(text: string): number[][] {
 }
 
 function selectVersion(byteLength: number): number {
-  // Capacity for byte mode, EC level L
   const capacities = [
     17, 32, 53, 78, 106, 134, 154, 192, 230, 271, 321, 367, 425, 458, 520, 586, 644, 718, 792, 858,
     929, 1003, 1091, 1171, 1273, 1367, 1465, 1528, 1628, 1732, 1840, 1952, 2068, 2188, 2303, 2431,
@@ -92,12 +86,10 @@ function createMatrix(version: number, data: Uint8Array): number[][] {
   const matrix: number[][] = Array.from({ length: size }, () => new Array(size).fill(-1));
   const reserved: boolean[][] = Array.from({ length: size }, () => new Array(size).fill(false));
 
-  // Finder patterns
   placeFinder(matrix, reserved, 0, 0);
   placeFinder(matrix, reserved, size - 7, 0);
   placeFinder(matrix, reserved, 0, size - 7);
 
-  // Alignment patterns
   if (version >= 2) {
     const positions = getAlignmentPositions(version);
     for (const [r, c] of positions) {
@@ -105,7 +97,6 @@ function createMatrix(version: number, data: Uint8Array): number[][] {
     }
   }
 
-  // Timing patterns
   for (let i = 8; i < size - 8; i++) {
     if (!reserved[6][i]) {
       matrix[6][i] = i % 2 === 0 ? 1 : 0;
@@ -117,14 +108,11 @@ function createMatrix(version: number, data: Uint8Array): number[][] {
     }
   }
 
-  // Format info placeholders
   reserveFormatInfo(matrix, reserved);
 
-  // Data
   const codewords = encodeData(version, data);
   placeData(matrix, reserved, codewords);
 
-  // Format info
   applyFormatInfo(matrix, EC_LEVEL_L);
 
   return matrix.map((row) => row.map((v) => (v === 1 ? 1 : 0)));
@@ -200,7 +188,7 @@ function reserveFormatInfo(matrix: number[][], reserved: boolean[][]) {
     matrix[8][size - 1 - i] = 0;
   }
   reserved[size - 8][8] = true;
-  matrix[size - 8][8] = 1; // dark module
+  matrix[size - 8][8] = 1;
 }
 
 function encodeData(version: number, data: Uint8Array): number[] {
@@ -208,30 +196,23 @@ function encodeData(version: number, data: Uint8Array): number[] {
   const totalCodewords = getTotalCodewords(version);
   const dataCodewords = totalCodewords - ecCodewords;
 
-  // Build bit stream
   const bits: number[] = [];
 
-  // Mode indicator (byte mode = 0100)
   appendBits(bits, 0b0100, 4);
 
-  // Character count
   const ccBits = version < 10 ? 8 : 16;
   appendBits(bits, data.length, ccBits);
 
-  // Data
   for (const byte of data) {
     appendBits(bits, byte, 8);
   }
 
-  // Terminator
   const totalDataBits = dataCodewords * 8;
   const remaining = totalDataBits - bits.length;
   if (remaining > 0) appendBits(bits, 0, Math.min(4, remaining));
 
-  // Pad to byte boundary
   while (bits.length % 8 !== 0) bits.push(0);
 
-  // Pad codewords
   const padBytes = [0xec, 0x11];
   let pi = 0;
   while (bits.length < totalDataBits) {
@@ -239,7 +220,6 @@ function encodeData(version: number, data: Uint8Array): number[] {
     pi++;
   }
 
-  // Convert to bytes
   const codewords: number[] = [];
   for (let i = 0; i < bits.length; i += 8) {
     let b = 0;
@@ -249,10 +229,8 @@ function encodeData(version: number, data: Uint8Array): number[] {
     codewords.push(b);
   }
 
-  // Error correction
   const ec = generateEc(codewords.slice(0, dataCodewords), ecCodewords);
 
-  // Interleave
   const blocks = [codewords.slice(0, dataCodewords)];
   const ecBlocks = [ec];
 
@@ -302,7 +280,6 @@ function getTotalCodewords(version: number): number {
   return TOTAL_CODEWORDS_TABLE[version] ?? 26;
 }
 
-// Reed-Solomon error correction
 function generateEc(data: number[], ecLength: number): number[] {
   const genPoly = getGeneratorPolynomial(ecLength);
   const result = new Array(ecLength).fill(0);
@@ -355,12 +332,12 @@ function getGeneratorPolynomial(degree: number): number[] {
 function placeData(matrix: number[][], reserved: boolean[][], codewords: number[]) {
   const size = matrix.length;
   let bitIndex = 0;
-  let direction = -1; // upward
+  let direction = -1;
   let col = size - 1;
   let row = size - 1;
 
   while (col > 0) {
-    if (col === 6) col--; // skip timing column
+    if (col === 6) col--;
 
     for (let i = 0; i < size; i++) {
       const r = direction === -1 ? size - 1 - i : i;
@@ -381,11 +358,10 @@ function placeData(matrix: number[][], reserved: boolean[][], codewords: number[
 }
 
 function applyFormatInfo(matrix: number[][], ecLevel: number) {
-  const format = (ecLevel << 3) | 0b00; // mask pattern 0
+  const format = (ecLevel << 3) | 0b00;
   const bits = computeFormatBits(format);
 
   const size = matrix.length;
-  // Horizontal
   for (let i = 0; i <= 5; i++) {
     matrix[8][i] = (bits >> i) & 1;
   }
@@ -396,7 +372,6 @@ function applyFormatInfo(matrix: number[][], ecLevel: number) {
     matrix[14 - i][8] = (bits >> i) & 1;
   }
 
-  // Vertical
   for (let i = 0; i < 8; i++) {
     matrix[size - 1 - i][8] = (bits >> i) & 1;
   }
