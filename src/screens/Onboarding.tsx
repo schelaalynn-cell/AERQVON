@@ -126,12 +126,8 @@ export function Onboarding({ onComplete }: OnboardingProps) {
           </Card>
 
           <div className="space-y-3">
-            <Button fullWidth size="lg" onClick={handleCreate}>
-              Create Demo Wallet
-            </Button>
-            <Button fullWidth variant="ghost" onClick={() => setStep('welcome')}>
-              Back
-            </Button>
+            <Button fullWidth size="lg" onClick={handleCreate}>Create Demo Wallet</Button>
+            <Button fullWidth variant="ghost" onClick={() => setStep('welcome')}>Back</Button>
           </div>
         </div>
       </div>
@@ -158,8 +154,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               <div className="flex items-start gap-3">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-nova-warning" />
                 <p className="text-xs text-nova-muted">
-                  TON Connect is integrated but real wallet connections are disabled
-                  until the security review is complete.
+                  TON Connect is integrated but real wallet connections are disabled until the security review is complete.
                 </p>
               </div>
             </Card>
@@ -189,24 +184,12 @@ export function Onboarding({ onComplete }: OnboardingProps) {
           )}
 
           <div className="space-y-3">
-            <Button
-              fullWidth
-              size="lg"
-              onClick={handleConnect}
-              disabled={connecting || !config.securityReviewPassed}
-            >
+            <Button fullWidth size="lg" onClick={handleConnect} disabled={connecting || !config.securityReviewPassed}>
               {connecting ? (
-                <>
-                  <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
-                  Connecting...
-                </>
-              ) : (
-                'Connect Wallet'
-              )}
+                <><Loader2 className="mr-2 inline h-4 w-4 animate-spin" />Connecting...</>
+              ) : 'Connect Wallet'}
             </Button>
-            <Button fullWidth variant="ghost" onClick={() => setStep('welcome')}>
-              Back
-            </Button>
+            <Button fullWidth variant="ghost" onClick={() => setStep('welcome')}>Back</Button>
           </div>
         </div>
       </div>
@@ -233,31 +216,19 @@ export function Onboarding({ onComplete }: OnboardingProps) {
           <Card className="mb-4 p-4 opacity-60">
             <div className="space-y-3">
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-nova-muted">
-                  Seed phrase (disabled)
-                </label>
-                <div className="rounded-xl border border-nova-border bg-nova-surface-2 px-4 py-3 text-sm text-nova-dim">
-                  Disabled in demo mode
-                </div>
+                <label className="mb-1.5 block text-xs font-medium text-nova-muted">Seed phrase (disabled)</label>
+                <div className="rounded-xl border border-nova-border bg-nova-surface-2 px-4 py-3 text-sm text-nova-dim">Disabled in demo mode</div>
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-nova-muted">
-                  Private key (disabled)
-                </label>
-                <div className="rounded-xl border border-nova-border bg-nova-surface-2 px-4 py-3 text-sm text-nova-dim">
-                  Disabled in demo mode
-                </div>
+                <label className="mb-1.5 block text-xs font-medium text-nova-muted">Private key (disabled)</label>
+                <div className="rounded-xl border border-nova-border bg-nova-surface-2 px-4 py-3 text-sm text-nova-dim">Disabled in demo mode</div>
               </div>
             </div>
           </Card>
 
           <div className="space-y-3">
-            <Button fullWidth size="lg" disabled>
-              Import (Locked)
-            </Button>
-            <Button fullWidth variant="ghost" onClick={() => setStep('welcome')}>
-              Back
-            </Button>
+            <Button fullWidth size="lg" disabled>Import (Locked)</Button>
+            <Button fullWidth variant="ghost" onClick={() => setStep('welcome')}>Back</Button>
           </div>
         </div>
       </div>
