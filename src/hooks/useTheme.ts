@@ -41,7 +41,6 @@ export function useTheme() {
   }, [theme]);
 
   const setTheme = (mode: ThemeMode) => setThemeState(mode);
-
   const resolved = theme === 'system' ? getSystemTheme() : theme;
 
   return { theme, resolved, setTheme };
