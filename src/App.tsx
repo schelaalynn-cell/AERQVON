@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import { AppProvider } from '@/context/AppContext';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { RouterProvider, useRouter } from '@/context/RouterContext';
 import { useUi } from '@/hooks/useUi';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useTheme } from '@/hooks/useTheme';
 import { BottomNav } from '@/components/BottomNav';
 import { Onboarding } from '@/screens/Onboarding';
+import { AuthScreen } from '@/screens/AuthScreen';
 import { HomeScreen } from '@/screens/HomeScreen';
 import { MarketsScreen } from '@/screens/MarketsScreen';
 import { TradeScreen } from '@/screens/TradeScreen';
@@ -23,46 +25,50 @@ function ScreenRouter() {
   const { showBackButton, hideBackButton } = useUi();
 
   useEffect(() => {
-    if (canGoBack && route.name !== 'tab') {
-      showBackButton(goBack);
-    } else {
-      hideBackButton();
-    }
+    if (canGoBack && route.name !== 'tab') showBackButton(goBack);
+    else hideBackButton();
     return () => hideBackButton();
   }, [canGoBack, route, goBack, showBackButton, hideBackButton]);
 
   switch (route.name) {
     case 'tab':
       switch (route.tab) {
-        case 'home':
-          return <HomeScreen />;
-        case 'markets':
-          return <MarketsScreen />;
-        case 'trade':
-          return <TradeScreen />;
-        case 'wallet':
-          return <WalletScreen />;
-        case 'settings':
-          return <SettingsScreen />;
+        case 'home': return <HomeScreen />;
+        case 'markets': return <MarketsScreen />;
+        case 'trade': return <TradeScreen />;
+        case 'wallet': return <WalletScreen />;
+        case 'settings': return <SettingsScreen />;
       }
       return <HomeScreen />;
-    case 'asset':
-      return <AssetDetailScreen assetId={route.assetId} />;
-    case 'receive':
-      return <ReceiveScreen assetId={route.assetId} />;
-    case 'send':
-      return <SendScreen assetId={route.assetId} />;
-    case 'swap-detail':
-      return <SwapScreen />;
-    case 'transaction':
-      return <TransactionDetailScreen txId={route.txId} />;
-    case 'activity':
-      return <ActivityScreen />;
-    case 'onboarding':
-      return null;
-    default:
-      return <HomeScreen />;
+    case 'asset': return <AssetDetailScreen assetId={route.assetId} />;
+    case 'receive': return <ReceiveScreen assetId={route.assetId} />;
+    case 'send': return <SendScreen assetId={route.assetId} />;
+    case 'swap-detail': return <SwapScreen />;
+    case 'transaction': return <TransactionDetailScreen txId={route.txId} />;
+    case 'activity': return <ActivityScreen />;
+    case 'onboarding': return null;
+    default: return <HomeScreen />;
   }
+}
+
+function AuthGate() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-nova-bg text-nova-text">
+        <div className="text-sm text-nova-muted">Loading AERQVON…</div>
+      </div>
+    );
+  }
+
+  if (!user) return <AuthScreen />;
+
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
+  );
 }
 
 function AppContent() {
@@ -70,9 +76,7 @@ function AppContent() {
   const { route } = useRouter();
   const showBottomNav = route.name === 'tab';
 
-  if (!onboarded) {
-    return <Onboarding onComplete={completeOnboarding} />;
-  }
+  if (!onboarded) return <Onboarding onComplete={completeOnboarding} />;
 
   return (
     <div className="min-h-screen bg-nova-bg text-nova-text">
@@ -88,11 +92,11 @@ function App() {
   useTheme();
 
   return (
-    <RouterProvider>
-      <AppProvider>
-        <AppContent />
-      </AppProvider>
-    </RouterProvider>
+    <AuthProvider>
+      <RouterProvider>
+        <AuthGate />
+      </RouterProvider>
+    </AuthProvider>
   );
 }
 
