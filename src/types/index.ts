@@ -1,5 +1,5 @@
 export type NetworkId = 'TON' | 'BTC' | 'ETH' | 'SOL' | 'BSC';
-export type AssetId = 'GRAM' | 'USDT' | 'BTC' | 'ETH' | 'AQV' | 'BNB' | 'USDC';
+export type AssetId = 'GRAM' | 'USDT' | 'BTC' | 'ETH' | 'AQV' | 'BNB' | 'USDC' | 'SOL' | 'XRP' | 'ADA' | 'DOGE';
 export type AssetType = 'native' | 'jetton' | 'simulated' | 'spl' | 'bep20' | 'erc20';
 
 export interface Network {
@@ -42,7 +42,7 @@ export interface Wallet {
 
 export type TransactionDirection = 'in' | 'out' | 'swap';
 export type TransactionStatus = 'pending' | 'completed' | 'failed';
-export type TransactionKind = 'send' | 'receive' | 'swap';
+export type TransactionKind = 'send' | 'receive' | 'swap' | 'trade';
 
 export interface Transaction {
   id: string;
@@ -85,6 +85,15 @@ export interface AppNotification {
   body: string;
   timestamp: number;
   read: boolean;
+}
+
+export interface TelegramUser {
+  id: number;
+  firstName: string;
+  lastName?: string;
+  username?: string;
+  languageCode?: string;
+  isPremium?: boolean;
 }
 
 export interface AppUser {
@@ -223,4 +232,11 @@ export interface Candlestick {
   low: number;
   close: number;
   volume: number;
+}
+
+export type OrderBookLevel = [price: number, amount: number];
+
+export interface OrderBook {
+  bids: OrderBookLevel[];
+  asks: OrderBookLevel[];
 }

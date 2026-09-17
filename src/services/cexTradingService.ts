@@ -121,7 +121,7 @@ function placeMarketOrder(pairSymbol: string, side: OrderSide, amount: number): 
   if (side === 'sell') realizedPnl = calculateRealizedPnl(pairSymbol, baseAmount, execPrice);
   else updatePositionOnBuy(pairSymbol, pair.baseAsset, baseAmount, execPrice);
 
-  const order: Order = { id: generateId('cex-order'), pairSymbol, side, type: 'market', price: execPrice, amount: baseAmount, total: quoteAmount, fee, feeAsset: pair.baseAsset, status: 'filled', createdAt: Date.now(), filledAt: Date.now(), filledPrice: execPrice, filledAmount: baseAmount, realizedPnl };
+  const order: Order = { id: generateId('cex-order'), pairSymbol, side, type: 'market', price: execPrice, amount: baseAmount, total: quoteAmount, fee, feeAsset: pair.baseAsset, status: 'filled', source: 'web', createdAt: Date.now(), filledAt: Date.now(), filledPrice: execPrice, filledAmount: baseAmount, realizedPnl };
   orderStore = [order, ...orderStore];
   tradeHistoryStore = [{ id: order.id, pairSymbol, side, type: 'market', price: execPrice, amount: baseAmount, total: quoteAmount, fee, feeAsset: pair.baseAsset, timestamp: Date.now(), mode: 'cex' }, ...tradeHistoryStore];
   transactionService.addTradeTransaction({ pairSymbol, side, type: 'market', baseAsset: pair.baseAsset, quoteAsset: pair.quoteAsset, baseAmount, quoteAmount, fee, execPrice });
@@ -153,7 +153,7 @@ function placeLimitOrder(pairSymbol: string, side: OrderSide, amount: number, pr
     lockBalance(pair.baseAsset, baseAmount, `Limit sell ${pairSymbol}`);
   }
 
-  const order: Order = { id: generateId('cex-order'), pairSymbol, side, type: 'limit', price, amount: baseAmount, total: quoteAmount, fee, feeAsset: pair.baseAsset, status: 'open', createdAt: Date.now() };
+  const order: Order = { id: generateId('cex-order'), pairSymbol, side, type: 'limit', price, amount: baseAmount, total: quoteAmount, fee, feeAsset: pair.baseAsset, status: 'open', source: 'web', createdAt: Date.now() };
   orderStore = [order, ...orderStore];
   dbSync.order(order, 'web');
   dbSync.notification('order_submitted', 'Limit Order Placed', `${pairSymbol}\n${side.toUpperCase()}\nLIMIT\nPrice: ${price.toFixed(price < 1 ? 4 : 2)}\nAmount: ${baseAmount.toFixed(4)} ${pair.baseLabel}`);

@@ -20,7 +20,8 @@ const CONFIRMATION_TIMEOUT_MS = 120000;
 function cellHashToHex(bocBase64: string): string {
   const cell = Cell.fromBase64(bocBase64);
   const hash = cell.hash();
-  return Array.from(hash).map((b) => b.toString(16).padStart(2, '0')).join('');
+  const bytes = new Uint8Array(hash);
+  return Array.from(bytes).map((b: number) => b.toString(16).padStart(2, '0')).join('');
 }
 
 export class BlockchainTransactionService implements TransactionService {

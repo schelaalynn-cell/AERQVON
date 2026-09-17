@@ -1,5 +1,5 @@
 import type { Transaction, TransactionDirection, TransactionKind, TransactionStatus } from '@/types';
-import { walletService } from './walletService';
+import { ASSETS, walletService } from './walletService';
 
 const SEED_TXS: Transaction[] = [
   {
@@ -153,6 +153,63 @@ interface SwapTxParams {
   fee: number;
 }
 
+interface TradeTxParams {
+  pairSymbol: string;
+  side: 'buy' | 'sell';
+  type: 'market' | 'limit';
+  baseAsset: string;
+  quoteAsset: string;
+  baseAmount: number;
+  quoteAmount: number;
+  fee: number;
+  execPrice: number;
+}
+
+function addTradeTransaction(params: TradeTxParams): Transaction {
+  const primaryAsset = params.side === 'buy' ? params.quoteAsset : params.baseAsset;
+  const primaryAmount = params.side === 'buy' ? params.quoteAmount : params.baseAmount;
+
+  const tx: Transaction = {
+    id: 'trade-' + Math.random().toString(36).slice(2, 10),
+    txHash: 'CEX-' + Math.random().toString(36).slice(2, 46),
+    assetId: primaryAsset as Transaction['assetId'],
+    assetSymbol: primaryAsset,
+    networkId: ASSETS.find((asset) => asset.id === primaryAsset)?.networkId ?? 'TON',
+    amount: primaryAmount,
+    usdValue: 0,
+    direction: params.side === 'buy' ? 'in' : 'out',
+    kind: 'trade',
+    status: 'completed',
+    timestamp: Date.now(),
+    swapFrom: params.side === 'buy'
+      ? params.quoteAsset as Transaction['assetId']
+      : params.baseAsset as Transaction['assetId'],
+    swapTo: params.side === 'buy'
+      ? params.baseAsset as Transaction['assetId']
+      : params.quoteAsset as Transaction['assetId'],
+    swapFromAmount: params.side === 'buy' ? params.quoteAmount : params.baseAmount,
+    swapToAmount: params.side === 'buy' ? params.baseAmount : params.quoteAmount,
+    fee: params.fee,
+    feeAsset: params.baseAsset as Transaction['assetId'],
+    memo: `CEX ${params.type} ${params.pairSymbol} @ ${params.execPrice}`,
+  };
+
+  txStore = [tx, ...txStore];
+
+  if (params.side === 'buy') {
+    walletService.adjustBalance(params.quoteAsset, -params.quoteAmount);
+    walletService.adjustBalance(params.baseAsset, params.baseAmount - params.fee);
+  } else {
+    walletService.adjustBalance(
+      params.baseAsset,
+      -(params.baseAmount + params.fee),
+    );
+    walletService.adjustBalance(params.quoteAsset, params.quoteAmount);
+  }
+
+  return tx;
+}
+
 function addSwapTransaction(params: SwapTxParams): Transaction {
   const tx: Transaction = {
     id: 'tx-' + Math.random().toString(36).slice(2, 10),
@@ -185,7 +242,7 @@ function getStatusHistory(_id: string): { status: TransactionStatus; at: number 
   return [{ status: 'pending', at: Date.now() }];
 }
 
-export type { SendParams, SwapTxParams };
+export type { SendParams, SwapTxParams, TradeTxParams };
 export type TxStatus = TransactionStatus;
 export type TxDirection = TransactionDirection;
 export type TxKind = TransactionKind;
@@ -195,5 +252,6 @@ export const transactionService = {
   getTransaction,
   sendTransaction,
   addSwapTransaction,
+  addTradeTransaction,
   getStatusHistory,
 };

@@ -67,7 +67,7 @@ async function fetchBinanceKlines(binanceSymbol: string, interval: string, limit
     const resp = await fetch(`https://api.binance.com/api/v3/klines?symbol=${binanceSymbol}&interval=${mapped}&limit=${limit}`);
     if (!resp.ok) return [];
     const json: unknown[][] = await resp.json();
-    return json.map((k) => ({ time: k[0] as number, open: parseFloat(k[1] as string), high: parseFloat(k[2] as string), low: parseFloat(k[3] as string), close: parseFloat(k[4] as string), volume: parseFloat(k[5] as string) }));
+    return json.map((k) => ({ timestamp: k[0] as number, open: parseFloat(k[1] as string), high: parseFloat(k[2] as string), low: parseFloat(k[3] as string), close: parseFloat(k[4] as string), volume: parseFloat(k[5] as string) }));
   } catch { return []; }
 }
 
