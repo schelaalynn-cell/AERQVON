@@ -23,9 +23,25 @@ export function MarketsScreen() {
   const [sortKey, setSortKey] = useState<SortKey>('volume');
   const [sortDesc, setSortDesc] = useState(true);
   const [favorites, setFavorites] = useState<Set<string>>(new Set(['AQV/USDC']));
+  const [pairs, setPairs] = useState<TradingPair[]>(() => marketService.getTradingPairs());
 
-  const pairs = marketService.getTradingPairs();
-  const pair = marketService.getPair(selectedPair) ?? pairs[0];
+  useEffect(() => {
+    let cancelled = false;
+
+    const refresh = async () => {
+      const nextPairs = await marketService.fetchTradingPairsAsync();
+      if (!cancelled) setPairs(nextPairs);
+    };
+
+    void refresh();
+    const timer = window.setInterval(refresh, 30_000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, []);
+  const pair = pairs.find((p) => p.symbol === selectedPair) ?? pairs[0];
 
   useEffect(() => {
     let cancelled = false;
