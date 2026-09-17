@@ -17,10 +17,11 @@ export function SettingsScreen() {
   const { wallet } = useApp();
   const { goBack: _goBack } = useRouter();
   const { user: telegramUser, haptic } = useUi();
-  const { user: authUser, signOut } = useAuth();
+  const { user: authUser, signOut, aqvUserId } = useAuth();
   const { theme, setTheme } = useTheme();
   const { resetOnboarding } = useOnboarding();
   const [mintCopied, setMintCopied] = useState(false);
+  const [aqvCopied, setAqvCopied] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const aqvMintAddress = config.aqvSolanaMintAddress;
   const aqvLaunched = Boolean(aqvMintAddress);
@@ -36,7 +37,7 @@ export function SettingsScreen() {
     <div className="min-h-screen pb-24">
       <ScreenHeader title="Settings" showBack={false} />
       <div className="mx-auto max-w-md px-4 pt-4 space-y-6">
-        <div><h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-nova-dim">Profile</h2><Card className="overflow-hidden"><div className="flex items-center gap-3 border-b border-nova-border p-4"><div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-nova-accent to-nova-accent-2 font-bold text-white">{telegramUser.firstName.charAt(0)}</div><div className="flex-1"><p className="font-semibold">{telegramUser.firstName} {telegramUser.lastName ?? ''}</p><p className="text-xs text-nova-muted">@{telegramUser.username || 'aerqvon_user'}</p></div></div><SettingRow icon={User} label="Username" value={`@${telegramUser.username || 'aerqvon_user'}`} /><SettingRow icon={Hash} label="Telegram ID" value={String(telegramUser.id)} /><SettingRow icon={ShieldCheck} label="AERQVON account" value={authUser?.email ?? 'Authenticated'} /><SettingRow icon={Wallet} label="Wallet address" value={`${wallet.address.slice(0, 8)}...${wallet.address.slice(-6)}`} mono /></Card></div>
+        <div><h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-nova-dim">Profile</h2><Card className="overflow-hidden"><div className="flex items-center gap-3 border-b border-nova-border p-4"><div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-nova-accent to-nova-accent-2 font-bold text-white">{telegramUser.firstName.charAt(0)}</div><div className="flex-1"><p className="font-semibold">{telegramUser.firstName} {telegramUser.lastName ?? ''}</p><p className="text-xs text-nova-muted">@{telegramUser.username || 'aerqvon_user'}</p></div></div><SettingRow icon={User} label="Username" value={`@${telegramUser.username || 'aerqvon_user'}`} /><SettingRow icon={Hash} label="Telegram ID" value={String(telegramUser.id)} /><SettingRow icon={ShieldCheck} label="AERQVON account" value={authUser?.email ?? 'Authenticated'} /><div className="flex items-center justify-between px-4 py-3"><div className="flex items-center gap-3"><Hash className="h-4 w-4 text-nova-dim" /><div><p className="text-sm">AERQVON User ID</p><p className="text-[10px] text-nova-dim">Permanent account identifier</p></div></div>{aqvUserId ? <button onClick={() => { navigator.clipboard?.writeText(aqvUserId); setAqvCopied(true); haptic('light'); setTimeout(() => setAqvCopied(false), 2000); }} className="flex items-center gap-2 rounded-lg bg-nova-surface-2 px-2.5 py-1.5 font-mono text-xs text-nova-muted transition-colors hover:text-nova-accent">{aqvUserId}{aqvCopied ? <Check className="h-3.5 w-3.5 text-nova-success" /> : <Copy className="h-3.5 w-3.5" />}</button> : <span className="text-xs text-nova-dim">Loading…</span>}</div><SettingRow icon={Wallet} label="Wallet address" value={`${wallet.address.slice(0, 8)}...${wallet.address.slice(-6)}`} mono /></Card></div>
         <TelegramLinkCard />
         <div>
           <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-nova-dim">AERQVON Launch</h2>
