@@ -8,6 +8,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import { config } from '@/config';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Card } from '@/components/ui/Card';
+import { TelegramLinkCard } from '@/components/TelegramLinkCard';
 import { DemoBadge } from '@/components/DemoBadge';
 import { User, Shield, HelpCircle, Info, ChevronRight, Globe, Moon, Sun, Languages, DollarSign, Lock, KeyRound, Fingerprint, LogOut, Flag, FileText, ShieldCheck, Hash, Wallet, Copy, Check, Rocket, ExternalLink, CircleCheck } from 'lucide-react';
 import type { ComponentType } from 'react';
@@ -36,6 +37,7 @@ export function SettingsScreen() {
       <ScreenHeader title="Settings" showBack={false} />
       <div className="mx-auto max-w-md px-4 pt-4 space-y-6">
         <div><h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-nova-dim">Profile</h2><Card className="overflow-hidden"><div className="flex items-center gap-3 border-b border-nova-border p-4"><div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-nova-accent to-nova-accent-2 font-bold text-white">{telegramUser.firstName.charAt(0)}</div><div className="flex-1"><p className="font-semibold">{telegramUser.firstName} {telegramUser.lastName ?? ''}</p><p className="text-xs text-nova-muted">@{telegramUser.username || 'aerqvon_user'}</p></div></div><SettingRow icon={User} label="Username" value={`@${telegramUser.username || 'aerqvon_user'}`} /><SettingRow icon={Hash} label="Telegram ID" value={String(telegramUser.id)} /><SettingRow icon={ShieldCheck} label="AERQVON account" value={authUser?.email ?? 'Authenticated'} /><SettingRow icon={Wallet} label="Wallet address" value={`${wallet.address.slice(0, 8)}...${wallet.address.slice(-6)}`} mono /></Card></div>
+        <TelegramLinkCard />
         <div>
           <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-nova-dim">AERQVON Launch</h2>
           <Card className="overflow-hidden">
