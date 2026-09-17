@@ -6,6 +6,7 @@ export type Route =
   | { name: 'asset'; assetId: string }
   | { name: 'receive'; assetId?: string }
   | { name: 'send'; assetId?: string }
+  | { name: 'aqv-send'; assetId?: string }
   | { name: 'swap-detail' }
   | { name: 'transaction'; txId: string }
   | { name: 'activity' }
