@@ -16,6 +16,7 @@ import { SettingsScreen } from '@/screens/SettingsScreen';
 import { AssetDetailScreen } from '@/screens/AssetDetailScreen';
 import { ReceiveScreen } from '@/screens/ReceiveScreen';
 import { SendScreen } from '@/screens/SendScreen';
+import { AqvSendScreen } from '@/screens/AqvSendScreen';
 import { SwapScreen } from '@/screens/SwapScreen';
 import { ActivityScreen } from '@/screens/ActivityScreen';
 import { TransactionDetailScreen } from '@/screens/TransactionDetailScreen';
@@ -43,6 +44,7 @@ function ScreenRouter() {
     case 'asset': return <AssetDetailScreen assetId={route.assetId} />;
     case 'receive': return <ReceiveScreen assetId={route.assetId} />;
     case 'send': return <SendScreen assetId={route.assetId} />;
+    case 'aqv-send': return <AqvSendScreen assetId={route.assetId} />;
     case 'swap-detail': return <SwapScreen />;
     case 'transaction': return <TransactionDetailScreen txId={route.txId} />;
     case 'activity': return <ActivityScreen />;
