@@ -28,6 +28,20 @@ export const NETWORKS: Network[] = [
 
 export const ASSETS: Asset[] = [
   {
+    id: 'AQV',
+    name: 'AERQVON Token',
+    symbol: 'AQV',
+    networkId: 'BSC',
+    networkName: 'BSC',
+    type: 'bep20',
+    decimals: 18,
+    isSimulated: true,
+    color: '#5b8cff',
+    priceUsd: 0.12,
+    change24h: 0,
+    launchStatus: 'pre-launch',
+  },
+  {
     id: 'GRAM',
     name: 'Gram',
     symbol: 'GRAM',
@@ -86,6 +100,7 @@ const DEMO_BALANCES: Balance[] = [
   { assetId: 'USDT', amount: 2150.0, usdValue: 0 },
   { assetId: 'BTC', amount: 0.0184, usdValue: 0 },
   { assetId: 'ETH', amount: 0.74, usdValue: 0 },
+  { assetId: 'AQV', amount: 0, usdValue: 0 },
 ];
 
 let walletStore: Wallet = {
