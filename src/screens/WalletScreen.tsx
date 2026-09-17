@@ -35,11 +35,11 @@ export function WalletScreen() {
                 <span className="text-xs font-medium">Receive</span>
               </button>
               <button
-                onClick={() => { haptic('light'); navigate({ name: 'send' }); }}
+                onClick={() => { haptic('light'); navigate({ name: 'aqv-send' }); }}
                 className="flex flex-col items-center gap-1.5 rounded-xl bg-nova-surface-2 py-3 transition-all active:scale-95"
               >
                 <Send className="h-5 w-5 text-nova-accent" />
-                <span className="text-xs font-medium">Send</span>
+                <span className="text-xs font-medium">Send to AQV ID</span>
               </button>
               <button
                 onClick={() => { haptic('light'); navigate({ name: 'swap-detail' }); }}
