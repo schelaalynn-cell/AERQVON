@@ -5,7 +5,7 @@ import { transactionService } from '@/services/transactionService';
 import { swapService } from '@/services/swapService';
 import { marketService } from '@/services/marketService';
 import { cexTradingService } from '@/services/cexTradingService';
-import { submitServerOrder } from '@/services/tradingOrderService';
+import { fetchServerOrders, submitServerOrder } from '@/services/tradingOrderService';
 import { dexTradingService } from '@/services/dexTradingService';
 import { fetchBalancesFromDb } from '@/services/dbSyncService';
 import type { PortfolioSummary } from '@/types';
@@ -45,6 +45,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<Transaction[]>(() => transactionService.getTransactions());
   const [tick, setTick] = useState(0);
   const [marketDataReady, setMarketDataReady] = useState(false);
+  const [serverOrders, setServerOrders] = useState<Order[]>([]);
 
   const refresh = useCallback(() => {
     setWallet(walletService.getWallet());
@@ -121,6 +122,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const submitServerTradingOrder = useCallback(async (pairSymbol: string, side: 'buy' | 'sell', type: 'market' | 'limit', amount: number, price?: number) => {
     const order = await submitServerOrder({ pairSymbol, side, type, amount, price });
+    setServerOrders((current) => [order, ...current.filter((existing) => existing.id !== order.id)]);
     refresh();
     return order;
   }, [refresh]);
@@ -137,12 +139,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return result;
   }, [refresh]);
 
+  useEffect(() => {
+    let active = true;
+    const loadServerOrders = async () => {
+      try {
+        const orders = await fetchServerOrders();
+        if (active) setServerOrders(orders);
+      } catch {
+        // Anonymous sessions and unavailable network are expected during startup.
+      }
+    };
+    void loadServerOrders();
+    const interval = setInterval(() => { void loadServerOrders(); }, 5000);
+    return () => { active = false; clearInterval(interval); };
+  }, []);
+
   const balances = useMemo(() => wallet.balances, [wallet, tick]);
   const portfolio = useMemo(() => marketService.getPortfolioSummary(wallet.balances), [wallet, tick]);
   const realizedPnl = useMemo(() => cexTradingService.getTotalRealizedPnl(), [tick]);
   const unrealizedPnl = useMemo(() => cexTradingService.getTotalUnrealizedPnl(), [tick]);
-  const openOrders = useMemo(() => cexTradingService.getOpenOrders(), [tick]);
-  const orderHistory = useMemo(() => cexTradingService.getOrderHistory(), [tick]);
+  const openOrders = useMemo(() => {
+    const local = cexTradingService.getOpenOrders();
+    return [...serverOrders.filter((o) => o.status === 'queued' || o.status === 'open'), ...local];
+  }, [serverOrders, tick]);
+  const orderHistory = useMemo(() => {
+    const local = cexTradingService.getOrderHistory();
+    const server = serverOrders.filter((o) => o.status !== 'queued' && o.status !== 'open');
+    return [...server, ...local];
+  }, [serverOrders, tick]);
   const tradeHistory = useMemo(() => cexTradingService.getTradeHistory(), [tick]);
   const lockedBalances = useMemo(() => cexTradingService.getLockedBalances(), [tick]);
   const dexTransactions = useMemo(() => dexTradingService.getTransactionHistory(), [tick]);
