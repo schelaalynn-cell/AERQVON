@@ -1,6 +1,3 @@
--- AERQVON public user identifier
--- Internal auth.users.id remains the canonical private identity.
--- AQV IDs are display/support identifiers and are never used as secrets.
 
 create table if not exists public.aqv_user_profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -74,3 +71,4 @@ check (aqv_user_id ~ '^AQV-[A-Z0-9]{8}$');
 
 create index if not exists aqv_user_profiles_aqv_user_id_idx
 on public.aqv_user_profiles (aqv_user_id);
+;

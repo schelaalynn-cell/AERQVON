@@ -1,4 +1,4 @@
--- Preserve AQV IDs in a private registry so identifiers are never reused.
+
 create table if not exists public.aqv_user_id_registry (
   aqv_user_id text primary key,
   user_id uuid unique references auth.users(id) on delete set null,
@@ -63,3 +63,4 @@ $function$;
 revoke all on table public.aqv_user_id_registry from anon, authenticated;
 revoke execute on function public.generate_aqv_user_id() from public, anon, authenticated;
 revoke execute on function public.handle_new_aqv_user() from public, anon, authenticated;
+;

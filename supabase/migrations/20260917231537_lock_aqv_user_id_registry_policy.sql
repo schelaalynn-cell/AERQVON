@@ -5,3 +5,4 @@ on public.aqv_user_id_registry
 for select
 to authenticated
 using (false);
+;
