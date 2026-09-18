@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CandlestickChart } from '@/components/ui/CandlestickChart';
 import { marketService, CHART_INTERVALS } from '@/services/marketService';
+import { liveMarketData } from '@/services/market/LiveMarketDataService';
 import { cexTradingService } from '@/services/cexTradingService';
 import { useApp } from '@/context/AppContext';
 import { useUi } from '@/hooks/useUi';
@@ -80,8 +81,34 @@ export function CEXTradeView() {
     setCandles(c); setOrderBook(ob); setRecentTrades(rt); setLoadingChart(false);
   }, [pairSymbol, interval]);
 
-  useEffect(() => { fetchChartData(); }, [fetchChartData]);
-  useEffect(() => { const ri = setInterval(fetchChartData, 10000); return () => clearInterval(ri); }, [fetchChartData]);
+  useEffect(() => {
+    void fetchChartData();
+  }, [fetchChartData]);
+
+  useEffect(() => {
+    const unsubscribe = liveMarketData.subscribeToKlineStream(pairSymbol, interval, (candle) => {
+      setCandles((current) => {
+        const next = current.length > 0 && current[current.length - 1].timestamp === candle.timestamp
+          ? [...current.slice(0, -1), candle]
+          : [...current, candle].slice(-200);
+        return next;
+      });
+    });
+    return unsubscribe;
+  }, [pairSymbol, interval]);
+
+  useEffect(() => {
+    const refreshSecondary = async () => {
+      const [ob, rt] = await Promise.all([
+        marketService.fetchOrderBookAsync(pairSymbol, 20),
+        marketService.fetchRecentTradesAsync(pairSymbol, 20),
+      ]);
+      setOrderBook(ob);
+      setRecentTrades(rt);
+    };
+    const ri = setInterval(() => { void refreshSecondary(); }, 10000);
+    return () => clearInterval(ri);
+  }, [pairSymbol]);
 
   const handlePairChange = (p: string) => { haptic('light'); setPairSymbol(p); setAmount(''); setLimitPrice(''); setError(''); setExecState('idle'); setShowPairPicker(false); };
   const handleSideChange = (s: OrderSide) => { haptic('light'); setSide(s); setError(''); setExecState('idle'); };
