@@ -4,6 +4,7 @@
  */
 
 import type { Asset, Candlestick, OrderBook, TradingPair } from '@/types';
+import { config } from '@/config';
 
 const COINGECKO_IDS: Record<string, string> = {
   BTC: 'bitcoin', ETH: 'ethereum', BNB: 'binancecoin', SOL: 'solana',
@@ -64,6 +65,16 @@ async function fetchBinanceTicker(binanceSymbol: string): Promise<{ lastPrice: n
 async function fetchBinanceKlines(binanceSymbol: string, interval: string, limit: number): Promise<Candlestick[]> {
   try {
     const mapped = INTERVAL_MAP[interval] ?? '1h';
+    if (config.marketDataApiUrl) {
+      const url = `${config.marketDataApiUrl}/market-data?market=spot&symbol=${encodeURIComponent(binanceSymbol)}&interval=${encodeURIComponent(mapped)}&limit=${limit}`;
+      const resp = await fetch(url, { headers: { accept: 'application/json' } });
+      if (resp.ok) {
+        const body = await resp.json();
+        if (Array.isArray(body.candles)) return body.candles.map((k: { openTime:number; open:string; high:string; low:string; close:string; volume:string }) => ({
+          timestamp: k.openTime, open: Number(k.open), high: Number(k.high), low: Number(k.low), close: Number(k.close), volume: Number(k.volume),
+        }));
+      }
+    }
     const resp = await fetch(`https://api.binance.com/api/v3/klines?symbol=${binanceSymbol}&interval=${mapped}&limit=${limit}`);
     if (!resp.ok) return [];
     const json: unknown[][] = await resp.json();
@@ -91,9 +102,27 @@ async function fetchBinanceRecentTrades(binanceSymbol: string, limit: number): P
   } catch { return []; }
 }
 
+
+export function subscribeToKlineStream(pairSymbol: string, interval: string, onCandle: (candle: Candlestick) => void): () => void {
+  const binanceSymbol = BINANCE_SYMBOLS[pairSymbol];
+  if (!binanceSymbol || !config.supabaseUrl) return () => {};
+  const mapped = INTERVAL_MAP[interval] ?? '1h';
+  const base = config.supabaseUrl.replace(/^https:/, 'wss:').replace(/\/$/, '');
+  const socket = new WebSocket(`${base}/functions/v1/market-stream?market=spot&symbol=${encodeURIComponent(binanceSymbol)}&interval=${encodeURIComponent(mapped)}`);
+  socket.onmessage = (event) => {
+    try {
+      const message = JSON.parse(event.data);
+      const k = message?.k;
+      if (!k) return;
+      onCandle({ timestamp: Number(k.t), open: Number(k.o), high: Number(k.h), low: Number(k.l), close: Number(k.c), volume: Number(k.v) });
+    } catch {}
+  };
+  return () => socket.close();
+}
+
 export const liveMarketData = {
   fetchCoinGeckoPrices, fetchBinanceTicker, fetchBinanceKlines,
-  fetchBinanceOrderBook, fetchBinanceRecentTrades,
+  fetchBinanceOrderBook, fetchBinanceRecentTrades, subscribeToKlineStream,
   getBinanceSymbol: (pairSymbol: string) => BINANCE_SYMBOLS[pairSymbol] ?? null,
   getCoinGeckoId: (assetId: string) => COINGECKO_IDS[assetId] ?? null,
 };
