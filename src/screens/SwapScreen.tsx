@@ -75,45 +75,45 @@ export function SwapScreen() {
             <h1 className="font-display text-2xl font-bold">Swap</h1>
             <div className="flex items-center gap-2">
               <DemoBadge />
-              <button onClick={() => { haptic('light'); setShowSettings((v) => !v); }} className="flex h-9 w-9 items-center justify-center rounded-xl bg-nova-surface border border-nova-border transition-transform active:scale-90">
-                <Settings2 className="h-4 w-4 text-nova-muted" />
+              <button onClick={() => { haptic('light'); setShowSettings((v) => !v); }} className="flex h-9 w-9 items-center justify-center rounded-xl bg-aerqvon-surface border border-aerqvon-border transition-transform active:scale-90">
+                <Settings2 className="h-4 w-4 text-aerqvon-muted" />
               </button>
             </div>
           </div>
-          <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-nova-accent-2/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-nova-accent-2">Demo Swap</div>
+          <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-aerqvon-accent-2/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-aerqvon-accent-2">Demo Swap</div>
         </div>
       </div>
 
       <div className="mx-auto max-w-md px-4">
         <Card className="p-4" glow>
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs text-nova-muted">From</span>
-            <button onClick={() => { haptic('light'); setAmount(String(fromBalance?.amount ?? 0)); }} className="text-xs text-nova-muted">
+            <span className="text-xs text-aerqvon-muted">From</span>
+            <button onClick={() => { haptic('light'); setAmount(String(fromBalance?.amount ?? 0)); }} className="text-xs text-aerqvon-muted">
               Balance: {marketService.formatAmount(fromBalance?.amount ?? 0, fromAsset.decimals)} {fromAsset.symbol}
             </button>
           </div>
           <div className="flex items-center gap-3">
-            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" className="flex-1 bg-transparent font-display text-2xl font-bold outline-none placeholder:text-nova-dim" />
+            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" className="flex-1 bg-transparent font-display text-2xl font-bold outline-none placeholder:text-aerqvon-dim" />
             <AssetSelector asset={fromAsset} onSelect={(id) => { haptic('light'); setFromAssetId(id); }} />
           </div>
-          <p className="mt-1 text-xs text-nova-muted">≈ {marketService.formatUsd(numericAmount * fromAsset.priceUsd)}</p>
+          <p className="mt-1 text-xs text-aerqvon-muted">≈ {marketService.formatUsd(numericAmount * fromAsset.priceUsd)}</p>
         </Card>
 
         <div className="relative -my-3 flex justify-center">
-          <button onClick={handleSwapAssets} className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-nova-border bg-nova-surface text-nova-accent transition-all active:scale-90 hover:rotate-180 duration-300">
+          <button onClick={handleSwapAssets} className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-aerqvon-border bg-aerqvon-surface text-aerqvon-accent transition-all active:scale-90 hover:rotate-180 duration-300">
             <ArrowDown className="h-5 w-5" />
           </button>
         </div>
 
         <Card className="p-4">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs text-nova-muted">To (estimated)</span>
+            <span className="text-xs text-aerqvon-muted">To (estimated)</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex-1 font-display text-2xl font-bold text-nova-muted">{quote ? marketService.formatAmount(quote.toAmount, toAsset.decimals) : '0.00'}</div>
+            <div className="flex-1 font-display text-2xl font-bold text-aerqvon-muted">{quote ? marketService.formatAmount(quote.toAmount, toAsset.decimals) : '0.00'}</div>
             <AssetSelector asset={toAsset} onSelect={(id) => { haptic('light'); setToAssetId(id); }} />
           </div>
-          <p className="mt-1 text-xs text-nova-muted">≈ {marketService.formatUsd((quote?.toAmount ?? 0) * toAsset.priceUsd)}</p>
+          <p className="mt-1 text-xs text-aerqvon-muted">≈ {marketService.formatUsd((quote?.toAmount ?? 0) * toAsset.priceUsd)}</p>
         </Card>
 
         {showSettings && (
@@ -121,14 +121,14 @@ export function SwapScreen() {
             <p className="mb-3 text-sm font-medium">Slippage Tolerance</p>
             <div className="flex gap-2">
               {[0.1, 0.5, 1.0, 3.0].map((s) => (
-                <button key={s} onClick={() => { haptic('light'); setSlippage(s); }} className={`flex-1 rounded-xl py-2 text-sm font-medium transition-all ${slippage === s ? 'bg-nova-accent text-white' : 'bg-nova-surface-2 text-nova-muted'}`}>{s}%</button>
+                <button key={s} onClick={() => { haptic('light'); setSlippage(s); }} className={`flex-1 rounded-xl py-2 text-sm font-medium transition-all ${slippage === s ? 'bg-aerqvon-accent text-white' : 'bg-aerqvon-surface-2 text-aerqvon-muted'}`}>{s}%</button>
               ))}
             </div>
           </Card>
         )}
 
         {quote && (
-          <Card className="mt-3 divide-y divide-nova-border animate-fade-in">
+          <Card className="mt-3 divide-y divide-aerqvon-border animate-fade-in">
             <QuoteRow label="Exchange rate" value={`1 ${fromAsset.symbol} = ${marketService.formatAmount(quote.exchangeRate, 6)} ${toAsset.symbol}`} />
             <QuoteRow label="Network fee" value={`${quote.networkFee} ${quote.feeAsset}`} />
             <QuoteRow label="Slippage" value={`${slippage}%`} />
@@ -138,14 +138,14 @@ export function SwapScreen() {
         )}
 
         {insufficientBalance && numericAmount > 0 && (
-          <Card className="mt-3 border-nova-error/20 bg-nova-error/5 p-3">
-            <p className="text-center text-sm text-nova-error">Insufficient balance</p>
+          <Card className="mt-3 border-aerqvon-error/20 bg-aerqvon-error/5 p-3">
+            <p className="text-center text-sm text-aerqvon-error">Insufficient balance</p>
           </Card>
         )}
 
         {success && (
-          <Card className="mt-3 border-nova-success/20 bg-nova-success/5 p-4 animate-scale-in">
-            <div className="flex items-center gap-2 text-nova-success">
+          <Card className="mt-3 border-aerqvon-success/20 bg-aerqvon-success/5 p-4 animate-scale-in">
+            <div className="flex items-center gap-2 text-aerqvon-success">
               <CheckCircle2 className="h-5 w-5" />
               <span className="text-sm font-medium">Swap executed (demo)</span>
             </div>
@@ -156,7 +156,7 @@ export function SwapScreen() {
           {executing ? (<><RefreshCw className="mr-2 inline h-4 w-4 animate-spin" />Swapping...</>) : insufficientBalance ? 'Insufficient Balance' : `Swap ${fromAsset.symbol} → ${toAsset.symbol}`}
         </Button>
 
-        <p className="mt-3 text-center text-[10px] text-nova-dim">Demo swap — simulated rates only. No real funds will move.</p>
+        <p className="mt-3 text-center text-[10px] text-aerqvon-dim">Demo swap — simulated rates only. No real funds will move.</p>
       </div>
     </div>
   );
@@ -169,14 +169,14 @@ function AssetSelector({ asset, onSelect }: { asset: Asset; onSelect: (id: Asset
 
   return (
     <div className="relative">
-      <button onClick={() => setOpen((v) => !v)} className="flex items-center gap-2 rounded-xl bg-nova-surface-2 px-3 py-2 transition-all active:scale-95">
+      <button onClick={() => setOpen((v) => !v)} className="flex items-center gap-2 rounded-xl bg-aerqvon-surface-2 px-3 py-2 transition-all active:scale-95">
         <AssetIcon asset={asset} size={28} />
         <span className="font-semibold">{asset.symbol}</span>
       </button>
       {open && (
         <Card className="absolute right-0 top-12 z-50 overflow-hidden animate-scale-in">
           {swapAssets.map((a) => (
-            <button key={a.id} onClick={() => { onSelect(a.id); setOpen(false); }} className="flex w-full items-center gap-2 px-3 py-2.5 transition-colors hover:bg-nova-surface-2/50 active:bg-nova-surface-2">
+            <button key={a.id} onClick={() => { onSelect(a.id); setOpen(false); }} className="flex w-full items-center gap-2 px-3 py-2.5 transition-colors hover:bg-aerqvon-surface-2/50 active:bg-aerqvon-surface-2">
               <AssetIcon asset={a} size={24} />
               <span className="text-sm font-medium">{a.symbol}</span>
             </button>
@@ -190,7 +190,7 @@ function AssetSelector({ asset, onSelect }: { asset: Asset; onSelect: (id: Asset
 function QuoteRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between px-4 py-2.5 text-sm">
-      <span className="text-nova-muted">{label}</span>
+      <span className="text-aerqvon-muted">{label}</span>
       <span className="font-medium">{value}</span>
     </div>
   );

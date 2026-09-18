@@ -19,9 +19,9 @@ export class DemoWalletProvider implements WalletProvider {
 
   async createWallet(): Promise<Wallet> {
     this.wallet = {
-      id: generateId('nova'),
+      id: generateId('aerqvon'),
       address: DEMO_ADDRESS,
-      label: 'Nova Demo Wallet',
+      label: 'AERQVON Demo Wallet',
       createdAt: Date.now(),
       balances: [],
     };

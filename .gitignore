@@ -21,3 +21,9 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+.env.backup-*
+supabase/.temp/
+*.backup-*
+.vercel
+.env*

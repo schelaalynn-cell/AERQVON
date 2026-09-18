@@ -9,7 +9,7 @@ export default {
         display: ['Space Grotesk', 'Inter', 'sans-serif'],
       },
       colors: {
-        nova: {
+        aerqvon: {
           bg: '#0a0b14', surface: '#14161f', 'surface-2': '#1b1e2b', 'surface-3': '#242838', border: '#2a2e40', text: '#f2f3f7', muted: '#8b90a3', dim: '#5b6075', accent: '#5b8cff', 'accent-2': '#7c5cff', success: '#2ecc8f', warning: '#f5b544', error: '#ff5c7c',
         },
         light: {

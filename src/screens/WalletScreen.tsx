@@ -22,38 +22,38 @@ export function WalletScreen() {
           </div>
 
           <Card className="overflow-hidden p-5" glow>
-            <p className="text-xs text-nova-muted">Total Balance</p>
+            <p className="text-xs text-aerqvon-muted">Total Balance</p>
             <p className="mt-1 font-display text-3xl font-bold">
               {marketService.formatUsd(portfolio.totalUsd)}
             </p>
             <div className="mt-4 grid grid-cols-3 gap-2">
               <button
                 onClick={() => { haptic('light'); navigate({ name: 'receive' }); }}
-                className="flex flex-col items-center gap-1.5 rounded-xl bg-nova-surface-2 py-3 transition-all active:scale-95"
+                className="flex flex-col items-center gap-1.5 rounded-xl bg-aerqvon-surface-2 py-3 transition-all active:scale-95"
               >
-                <ArrowDownLeft className="h-5 w-5 text-nova-accent" />
+                <ArrowDownLeft className="h-5 w-5 text-aerqvon-accent" />
                 <span className="text-xs font-medium">Receive</span>
               </button>
               <button
                 onClick={() => { haptic('light'); navigate({ name: 'aqv-send' }); }}
-                className="flex flex-col items-center gap-1.5 rounded-xl bg-nova-surface-2 py-3 transition-all active:scale-95"
+                className="flex flex-col items-center gap-1.5 rounded-xl bg-aerqvon-surface-2 py-3 transition-all active:scale-95"
               >
-                <Send className="h-5 w-5 text-nova-accent" />
+                <Send className="h-5 w-5 text-aerqvon-accent" />
                 <span className="text-xs font-medium">Send to AQV ID</span>
               </button>
               <button
                 onClick={() => { haptic('light'); navigate({ name: 'swap-detail' }); }}
-                className="flex flex-col items-center gap-1.5 rounded-xl bg-nova-surface-2 py-3 transition-all active:scale-95"
+                className="flex flex-col items-center gap-1.5 rounded-xl bg-aerqvon-surface-2 py-3 transition-all active:scale-95"
               >
-                <ArrowLeftRight className="h-5 w-5 text-nova-accent" />
+                <ArrowLeftRight className="h-5 w-5 text-aerqvon-accent" />
                 <span className="text-xs font-medium">Swap</span>
               </button>
             </div>
           </Card>
 
-          <div className="mt-3 flex items-center gap-2 rounded-xl bg-nova-surface border border-nova-border px-4 py-3">
-            <Info className="h-4 w-4 shrink-0 text-nova-dim" />
-            <p className="truncate font-mono text-xs text-nova-muted">{wallet.address}</p>
+          <div className="mt-3 flex items-center gap-2 rounded-xl bg-aerqvon-surface border border-aerqvon-border px-4 py-3">
+            <Info className="h-4 w-4 shrink-0 text-aerqvon-dim" />
+            <p className="truncate font-mono text-xs text-aerqvon-muted">{wallet.address}</p>
           </div>
         </div>
       </div>
@@ -77,11 +77,11 @@ export function WalletScreen() {
           })}
         </div>
 
-        <Card className="mt-4 border-nova-warning/20 bg-nova-warning/5 p-4">
+        <Card className="mt-4 border-aerqvon-warning/20 bg-aerqvon-warning/5 p-4">
           <div className="flex items-start gap-3">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-nova-warning" />
-            <p className="text-xs text-nova-muted">
-              BTC and ETH are <span className="font-medium text-nova-warning">simulated assets</span> for
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-aerqvon-warning" />
+            <p className="text-xs text-aerqvon-muted">
+              BTC and ETH are <span className="font-medium text-aerqvon-warning">simulated assets</span> for
               demonstration. They are not connected to real blockchains in demo mode.
             </p>
           </div>

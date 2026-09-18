@@ -20,19 +20,19 @@ export function ScreenHeader({ title, subtitle, right, showBack = true }: Screen
   };
 
   return (
-    <header className="glass sticky top-0 z-40 border-b border-nova-border safe-top">
+    <header className="glass sticky top-0 z-40 border-b border-aerqvon-border safe-top">
       <div className="mx-auto flex max-w-md items-center gap-3 px-4 py-3">
         {showBack && canGoBack && (
           <button
             onClick={handleBack}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-nova-surface-2 text-nova-text transition-transform active:scale-90"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-aerqvon-surface-2 text-aerqvon-text transition-transform active:scale-90"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
         )}
         <div className="min-w-0 flex-1">
           <h1 className="truncate font-display text-lg font-semibold leading-tight">{title}</h1>
-          {subtitle && <p className="truncate text-xs text-nova-muted">{subtitle}</p>}
+          {subtitle && <p className="truncate text-xs text-aerqvon-muted">{subtitle}</p>}
         </div>
         {right && <div className="shrink-0">{right}</div>}
       </div>

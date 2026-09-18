@@ -1,4 +1,5 @@
 import type { Asset, Balance, Network, Wallet } from '@/types';
+import { getMarketQuote } from '@/services/market/marketState';
 
 const DEMO_ADDRESS = 'EQDk2ZvN9s8fM4pQ3rT7vX2cB1nH6yL5jK4gW0eR8uY3aZb';
 
@@ -104,9 +105,9 @@ const DEMO_BALANCES: Balance[] = [
 ];
 
 let walletStore: Wallet = {
-  id: 'nova-demo-001',
+  id: 'aerqvon-demo-001',
   address: DEMO_ADDRESS,
-  label: 'Nova Wallet',
+  label: 'AERQVON Wallet',
   createdAt: Date.now() - 86400000 * 12,
   balances: DEMO_BALANCES,
 };
@@ -114,7 +115,24 @@ let walletStore: Wallet = {
 function recomputeUsd(balances: Balance[]): Balance[] {
   return balances.map((b) => {
     const asset = ASSETS.find((a) => a.id === b.assetId);
-    return { ...b, usdValue: asset ? b.amount * asset.priceUsd : 0 };
+
+    if (!asset) {
+      return { ...b, usdValue: 0 };
+    }
+
+    const marketSymbol =
+      b.assetId === 'AQV' ? 'AQV/USDC' : `${b.assetId}/USDC`;
+    const liveQuote = getMarketQuote(marketSymbol);
+
+    const priceUsd =
+      liveQuote?.priceUsd != null
+        ? liveQuote.priceUsd
+        : asset.priceUsd;
+
+    return {
+      ...b,
+      usdValue: b.amount * priceUsd,
+    };
   });
 }
 
@@ -148,9 +166,9 @@ function getBalances(): Balance[] {
 
 function createWallet(): Wallet {
   walletStore = {
-    id: 'nova-' + Math.random().toString(36).slice(2, 10),
+    id: 'aerqvon-' + Math.random().toString(36).slice(2, 10),
     address: 'EQD' + Math.random().toString(36).slice(2, 14) + 'aZb',
-    label: 'Nova Wallet',
+    label: 'AERQVON Wallet',
     createdAt: Date.now(),
     balances: [
       { assetId: 'GRAM', amount: 100, usdValue: 0 },

@@ -36,14 +36,14 @@ export function AuthScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-nova-bg px-5 py-10 text-nova-text">
+    <div className="min-h-screen bg-aerqvon-bg px-5 py-10 text-aerqvon-text">
       <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-md flex-col justify-center">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-nova-primary/15 text-nova-primary">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-aerqvon-primary/15 text-aerqvon-primary">
             <ShieldCheck size={34} />
           </div>
           <h1 className="text-3xl font-bold tracking-tight">AERQVON</h1>
-          <p className="mt-2 text-sm text-nova-muted">Secure crypto wallet & spot trading</p>
+          <p className="mt-2 text-sm text-aerqvon-muted">Secure crypto wallet & spot trading</p>
         </div>
 
         <div className="card p-5">
@@ -51,14 +51,14 @@ export function AuthScreen() {
             <button
               type="button"
               onClick={() => { setMode('signin'); setMessage(''); }}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition ${mode === 'signin' ? 'bg-white/10 text-nova-text' : 'text-nova-muted'}`}
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition ${mode === 'signin' ? 'bg-white/10 text-aerqvon-text' : 'text-aerqvon-muted'}`}
             >
               <LogIn className="mr-2 inline" size={16} /> Sign in
             </button>
             <button
               type="button"
               onClick={() => { setMode('signup'); setMessage(''); }}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition ${mode === 'signup' ? 'bg-white/10 text-nova-text' : 'text-nova-muted'}`}
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition ${mode === 'signup' ? 'bg-white/10 text-aerqvon-text' : 'text-aerqvon-muted'}`}
             >
               <UserPlus className="mr-2 inline" size={16} /> Create account
             </button>
@@ -77,12 +77,12 @@ export function AuthScreen() {
                   setBusy(false);
                 }
               }}
-              className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-nova-text disabled:cursor-not-allowed disabled:opacity-50"
+              className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-aerqvon-text disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Chrome size={18} /> Continue with Google
             </button>
 
-            <div className="mb-4 flex items-center gap-3 text-xs text-nova-dim">
+            <div className="mb-4 flex items-center gap-3 text-xs text-aerqvon-dim">
               <span className="h-px flex-1 bg-white/10" />
               <span>or</span>
               <span className="h-px flex-1 bg-white/10" />
@@ -90,46 +90,46 @@ export function AuthScreen() {
 
           <form onSubmit={submit} className="space-y-4">
             <label className="block">
-              <span className="mb-2 block text-sm text-nova-muted">Email</span>
+              <span className="mb-2 block text-sm text-aerqvon-muted">Email</span>
               <input
                 type="email"
                 autoComplete="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-nova-primary"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-aerqvon-primary"
                 placeholder="you@example.com"
                 disabled={busy}
               />
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm text-nova-muted">Password</span>
+              <span className="mb-2 block text-sm text-aerqvon-muted">Password</span>
               <input
                 type="password"
                 autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-nova-primary"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-aerqvon-primary"
                 placeholder="At least 6 characters"
                 disabled={busy}
               />
             </label>
 
             {message && (
-              <div className="rounded-xl bg-white/5 px-4 py-3 text-sm text-nova-muted">{message}</div>
+              <div className="rounded-xl bg-white/5 px-4 py-3 text-sm text-aerqvon-muted">{message}</div>
             )}
 
             <button
               type="submit"
               disabled={busy}
-              className="w-full rounded-xl bg-nova-primary px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl bg-aerqvon-primary px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               {busy ? 'Please wait…' : mode === 'signin' ? 'Sign in to AERQVON' : 'Create AERQVON account'}
             </button>
           </form>
         </div>
 
-        <p className="mt-5 text-center text-xs text-nova-muted">
+        <p className="mt-5 text-center text-xs text-aerqvon-muted">
           Your trading data is protected by Supabase Auth and database row-level security.
         </p>
       </div>

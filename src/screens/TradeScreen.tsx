@@ -25,15 +25,15 @@ export function TradeScreen() {
       <ScreenHeader title="Trade" subtitle="Spot trading & swaps" right={<DemoBadge />} />
 
       <div className="px-4 pt-2">
-        <div className="flex gap-1 rounded-xl bg-nova-surface-2 p-1">
+        <div className="flex gap-1 rounded-xl bg-aerqvon-surface-2 p-1">
           {MODE_TABS.map((tab) => (
             <button
               key={tab.value}
               onClick={() => handleModeChange(tab.value)}
               className={`flex-1 rounded-lg py-2.5 text-sm font-bold transition-all ${
                 mode === tab.value
-                  ? 'bg-nova-accent text-white shadow-glow'
-                  : 'text-nova-dim'
+                  ? 'bg-aerqvon-accent text-white shadow-glow'
+                  : 'text-aerqvon-dim'
               }`}
             >
               {tab.label}

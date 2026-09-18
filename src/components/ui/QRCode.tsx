@@ -22,8 +22,8 @@ export function QRCode({ value, size = 220 }: QRCodeProps) {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center rounded-2xl border border-nova-border bg-nova-surface-2" style={{ width: size, height: size }}>
-        <span className="text-xs text-nova-muted">QR unavailable</span>
+      <div className="flex items-center justify-center rounded-2xl border border-aerqvon-border bg-aerqvon-surface-2" style={{ width: size, height: size }}>
+        <span className="text-xs text-aerqvon-muted">QR unavailable</span>
       </div>
     );
   }

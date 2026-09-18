@@ -29,7 +29,7 @@ export function BottomNav() {
   };
 
   return (
-    <nav className="glass fixed bottom-0 left-0 right-0 z-50 border-t border-nova-border safe-bottom">
+    <nav className="glass fixed bottom-0 left-0 right-0 z-50 border-t border-aerqvon-border safe-bottom">
       <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
         {TABS.map((t) => {
           const Icon = t.icon;
@@ -43,15 +43,15 @@ export function BottomNav() {
               <div
                 className={`flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 ${
                   active
-                    ? 'bg-nova-accent/15 text-nova-accent scale-105'
-                    : 'text-nova-dim group-active:scale-90'
+                    ? 'bg-aerqvon-accent/15 text-aerqvon-accent scale-105'
+                    : 'text-aerqvon-dim group-active:scale-90'
                 }`}
               >
                 <Icon className="h-5 w-5" />
               </div>
               <span
                 className={`text-[10px] font-medium transition-colors ${
-                  active ? 'text-nova-accent' : 'text-nova-dim'
+                  active ? 'text-aerqvon-accent' : 'text-aerqvon-dim'
                 }`}
               >
                 {t.label}

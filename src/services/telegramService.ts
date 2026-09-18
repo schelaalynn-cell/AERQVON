@@ -151,9 +151,9 @@ function openLink(url: string): void {
 function getDemoUser(): TelegramUser {
   return {
     id: 700000001,
-    firstName: 'Nova',
+    firstName: 'AERQVON',
     lastName: 'Demo',
-    username: 'nova_demo',
+    username: 'aerqvon_demo',
     languageCode: 'en',
   };
 }

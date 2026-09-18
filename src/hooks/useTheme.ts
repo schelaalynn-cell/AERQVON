@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ThemeMode } from '@/types';
 
-const STORAGE_KEY = 'nova-theme';
+const STORAGE_KEY = 'aerqvon-theme';
 
 function getSystemTheme(): 'light' | 'dark' {
   if (typeof window === 'undefined') return 'dark';

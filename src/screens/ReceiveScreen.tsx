@@ -41,19 +41,19 @@ export function ReceiveScreen({ assetId }: ReceiveScreenProps) {
 
       <div className="mx-auto max-w-md px-4 pt-4">
         <div className="mb-4">
-          <label className="mb-1.5 block text-xs font-medium text-nova-muted">Asset</label>
+          <label className="mb-1.5 block text-xs font-medium text-aerqvon-muted">Asset</label>
           <button
             onClick={() => { haptic('light'); setShowAssetPicker((v) => !v); }}
-            className="flex w-full items-center justify-between rounded-xl bg-nova-surface border border-nova-border px-4 py-3 transition-all active:scale-[0.98]"
+            className="flex w-full items-center justify-between rounded-xl bg-aerqvon-surface border border-aerqvon-border px-4 py-3 transition-all active:scale-[0.98]"
           >
             <div className="flex items-center gap-3">
               <AssetIcon asset={asset} size={36} />
               <div className="text-left">
                 <p className="font-medium">{asset.name}</p>
-                <p className="text-xs text-nova-muted">{asset.symbol} · {network?.shortName}</p>
+                <p className="text-xs text-aerqvon-muted">{asset.symbol} · {network?.shortName}</p>
               </div>
             </div>
-            <ChevronDown className={`h-5 w-5 text-nova-dim transition-transform ${showAssetPicker ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`h-5 w-5 text-aerqvon-dim transition-transform ${showAssetPicker ? 'rotate-180' : ''}`} />
           </button>
 
           {showAssetPicker && (
@@ -74,8 +74,8 @@ export function ReceiveScreen({ assetId }: ReceiveScreenProps) {
           )}
         </div>
 
-        <div className="mb-4 flex items-center justify-between rounded-xl bg-nova-surface border border-nova-border px-4 py-3">
-          <span className="text-sm text-nova-muted">Network</span>
+        <div className="mb-4 flex items-center justify-between rounded-xl bg-aerqvon-surface border border-aerqvon-border px-4 py-3">
+          <span className="text-sm text-aerqvon-muted">Network</span>
           <span className="text-sm font-medium">{network?.name ?? 'TON'}</span>
         </div>
 
@@ -83,13 +83,13 @@ export function ReceiveScreen({ assetId }: ReceiveScreenProps) {
           <div className="rounded-3xl bg-white p-4 shadow-card">
             <QRCode value={wallet.address} size={220} />
           </div>
-          <p className="mt-4 text-xs text-nova-muted">Scan to send {asset.symbol}</p>
+          <p className="mt-4 text-xs text-aerqvon-muted">Scan to send {asset.symbol}</p>
           <p className="mt-1 font-display text-lg font-semibold">{asset.name} ({asset.symbol})</p>
-          <p className="text-xs text-nova-dim">on {network?.name}</p>
+          <p className="text-xs text-aerqvon-dim">on {network?.name}</p>
         </Card>
 
         <Card className="mt-4 p-4">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-nova-dim">
+          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-aerqvon-dim">
             Wallet Address
           </p>
           <p className="break-all font-mono text-sm leading-relaxed">{wallet.address}</p>
@@ -104,12 +104,12 @@ export function ReceiveScreen({ assetId }: ReceiveScreenProps) {
           </div>
         </Card>
 
-        <Card className="mt-4 border-nova-error/20 bg-nova-error/5 p-4">
+        <Card className="mt-4 border-aerqvon-error/20 bg-aerqvon-error/5 p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-nova-error" />
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-aerqvon-error" />
             <div>
-              <p className="text-sm font-medium text-nova-error">Important</p>
-              <p className="mt-1 text-xs text-nova-muted">
+              <p className="text-sm font-medium text-aerqvon-error">Important</p>
+              <p className="mt-1 text-xs text-aerqvon-muted">
                 Only send assets supported by this wallet and network. Sending unsupported assets may
                 result in permanent loss of funds.
               </p>
@@ -117,7 +117,7 @@ export function ReceiveScreen({ assetId }: ReceiveScreenProps) {
           </div>
         </Card>
 
-        <p className="mt-3 text-center text-[10px] text-nova-dim">
+        <p className="mt-3 text-center text-[10px] text-aerqvon-dim">
           Using demo address — not a real wallet
         </p>
       </div>
@@ -137,14 +137,14 @@ function AssetOption({
   return (
     <button
       onClick={onClick}
-      className="flex w-full items-center gap-3 px-4 py-3 transition-colors hover:bg-nova-surface-2/50 active:bg-nova-surface-2"
+      className="flex w-full items-center gap-3 px-4 py-3 transition-colors hover:bg-aerqvon-surface-2/50 active:bg-aerqvon-surface-2"
     >
       <AssetIcon asset={asset} size={32} />
       <div className="flex-1 text-left">
         <p className="text-sm font-medium">{asset.name}</p>
-        <p className="text-xs text-nova-muted">{asset.symbol}</p>
+        <p className="text-xs text-aerqvon-muted">{asset.symbol}</p>
       </div>
-      {selected && <Check className="h-4 w-4 text-nova-accent" />}
+      {selected && <Check className="h-4 w-4 text-aerqvon-accent" />}
     </button>
   );
 }

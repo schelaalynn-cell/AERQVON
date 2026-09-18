@@ -4,6 +4,7 @@ import { walletService } from '@/services/walletService';
 import { transactionService } from '@/services/transactionService';
 import { swapService } from '@/services/swapService';
 import { marketService } from '@/services/marketService';
+import { subscribeToMarketState } from '@/services/market/marketState';
 import { cexTradingService } from '@/services/cexTradingService';
 import { fetchServerOrders, submitServerOrder } from '@/services/tradingOrderService';
 import { dexTradingService } from '@/services/dexTradingService';
@@ -56,6 +57,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const t = setTimeout(() => setMarketDataReady(true), 800);
     return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    return subscribeToMarketState(() => {
+      setWallet(walletService.getWallet());
+      setTick((t) => t + 1);
+    });
   }, []);
 
   useEffect(() => {
