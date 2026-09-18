@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { LogIn, UserPlus, ShieldCheck } from 'lucide-react';
+import { LogIn, UserPlus, ShieldCheck, Chrome } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export function AuthScreen() {
-  const { signIn, signUp } = useAuth();
+  const { signIn, signInWithGoogle, signUp } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -63,6 +63,30 @@ export function AuthScreen() {
               <UserPlus className="mr-2 inline" size={16} /> Create account
             </button>
           </div>
+
+            <button
+              type="button"
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                setMessage('');
+                try {
+                  const result = await signInWithGoogle();
+                  if (result.error) setMessage(result.error.message);
+                } finally {
+                  setBusy(false);
+                }
+              }}
+              className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-semibold text-nova-text disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Chrome size={18} /> Continue with Google
+            </button>
+
+            <div className="mb-4 flex items-center gap-3 text-xs text-nova-dim">
+              <span className="h-px flex-1 bg-white/10" />
+              <span>or</span>
+              <span className="h-px flex-1 bg-white/10" />
+            </div>
 
           <form onSubmit={submit} className="space-y-4">
             <label className="block">
