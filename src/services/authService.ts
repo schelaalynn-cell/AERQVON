@@ -37,6 +37,13 @@ export async function signUpWithPassword(email: string, password: string) {
   return getSupabaseClient().auth.signUp({ email: email.trim(), password });
 }
 
+export async function signInWithGoogle() {
+  return getSupabaseClient().auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  });
+}
+
 export async function signOut() {
   return getSupabaseClient().auth.signOut();
 }
