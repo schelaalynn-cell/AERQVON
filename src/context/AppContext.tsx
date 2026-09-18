@@ -5,6 +5,7 @@ import { transactionService } from '@/services/transactionService';
 import { swapService } from '@/services/swapService';
 import { marketService } from '@/services/marketService';
 import { cexTradingService } from '@/services/cexTradingService';
+import { submitServerOrder } from '@/services/tradingOrderService';
 import { dexTradingService } from '@/services/dexTradingService';
 import { fetchBalancesFromDb } from '@/services/dbSyncService';
 import type { PortfolioSummary } from '@/types';
@@ -31,6 +32,7 @@ interface AppContextValue {
   executeSwap: (fromAssetId: string, toAssetId: string, fromAmount: number) => boolean;
   placeMarketOrder: (pairSymbol: string, side: 'buy' | 'sell', amount: number) => Order;
   placeLimitOrder: (pairSymbol: string, side: 'buy' | 'sell', amount: number, price: number) => Order;
+  submitServerOrder: (pairSymbol: string, side: 'buy' | 'sell', type: 'market' | 'limit', amount: number, price?: number) => Promise<Order>;
   cancelOrder: (orderId: string) => boolean;
   executeDexSwap: (fromAssetId: string, toAssetId: string, fromAmount: number, slippage: number) => DexTransaction | null;
 }
@@ -117,6 +119,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return order;
   }, [refresh]);
 
+  const submitServerTradingOrder = useCallback(async (pairSymbol: string, side: 'buy' | 'sell', type: 'market' | 'limit', amount: number, price?: number) => {
+    const order = await submitServerOrder({ pairSymbol, side, type, amount, price });
+    refresh();
+    return order;
+  }, [refresh]);
+
   const cancelOrder = useCallback((orderId: string) => {
     const result = cexTradingService.cancelOrder(orderId);
     if (result) refresh();
@@ -143,7 +151,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     wallet, assets, balances, transactions, portfolio, marketDataReady,
     openOrders, orderHistory, tradeHistory, realizedPnl, unrealizedPnl,
     lockedBalances, dexTransactions, refresh, sendTransaction, executeSwap,
-    placeMarketOrder, placeLimitOrder, cancelOrder, executeDexSwap,
+    placeMarketOrder, placeLimitOrder, submitServerOrder: submitServerTradingOrder, cancelOrder, executeDexSwap,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
