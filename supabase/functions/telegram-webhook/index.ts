@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const AERQVON_APP_URL = Deno.env.get("AERQVON_APP_URL");
 
 const TELEGRAM_BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -59,7 +60,25 @@ Deno.serve(async (req: Request) => {
       const text = identity?.user_id
         ? `Welcome back to AERQVON, ${firstName ?? "there"}. Your Telegram account is linked.${aqvUserId ? `\\nAERQVON User ID: ${aqvUserId}` : ""}`
         : `Welcome to AERQVON, ${firstName ?? "there"}. Your Telegram account is not linked yet. Open the AERQVON app to securely link it.`;
-      await telegram("sendMessage", { chat_id: message.chat.id, text });
+
+      const replyMarkup = AERQVON_APP_URL
+        ? {
+            inline_keyboard: [
+              [
+                {
+                  text: "Open AERQVON",
+                  web_app: { url: AERQVON_APP_URL },
+                },
+              ],
+            ],
+          }
+        : undefined;
+
+      await telegram("sendMessage", {
+        chat_id: message.chat.id,
+        text,
+        ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
+      });
     } else if (command === "/help") {
       await telegram("sendMessage", {
         chat_id: message.chat.id,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const ONBOARDED_KEY = 'nova-onboarded';
+const ONBOARDED_KEY = 'aerqvon-onboarded';
 
 export function useOnboarding() {
   const [onboarded, setOnboardedState] = useState<boolean>(() => {

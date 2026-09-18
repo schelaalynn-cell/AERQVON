@@ -22,7 +22,7 @@ export function AssetRow({ asset, amount, usdValue, onClick, showChevron = true 
         <div className="relative">
           <AssetIcon asset={asset} size={44} />
           {asset.isSimulated && (
-            <span className="absolute -bottom-1 -right-1 rounded-full bg-nova-bg px-1 py-0.5 text-[7px] font-bold uppercase text-nova-warning">
+            <span className="absolute -bottom-1 -right-1 rounded-full bg-aerqvon-bg px-1 py-0.5 text-[7px] font-bold uppercase text-aerqvon-warning">
               Sim
             </span>
           )}
@@ -30,12 +30,12 @@ export function AssetRow({ asset, amount, usdValue, onClick, showChevron = true 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="font-semibold">{asset.name}</span>
-            <span className="text-xs text-nova-muted">{asset.symbol}</span>
+            <span className="text-xs text-aerqvon-muted">{asset.symbol}</span>
           </div>
           <div className="mt-0.5 flex items-center gap-2">
-            <span className="text-xs text-nova-muted">{marketService.formatPrice(asset.priceUsd)}</span>
+            <span className="text-xs text-aerqvon-muted">{marketService.formatPrice(asset.priceUsd)}</span>
             <span
-              className={`text-xs font-medium ${positive ? 'text-nova-success' : 'text-nova-error'}`}
+              className={`text-xs font-medium ${positive ? 'text-aerqvon-success' : 'text-aerqvon-error'}`}
             >
               {marketService.formatPct(change)}
             </span>
@@ -43,9 +43,9 @@ export function AssetRow({ asset, amount, usdValue, onClick, showChevron = true 
         </div>
         <div className="text-right">
           <div className="font-semibold">{marketService.formatAmount(amount, asset.decimals)}</div>
-          <div className="text-xs text-nova-muted">{marketService.formatUsd(usdValue)}</div>
+          <div className="text-xs text-aerqvon-muted">{marketService.formatUsd(usdValue)}</div>
         </div>
-        {showChevron && <ChevronRight className="h-4 w-4 text-nova-dim" />}
+        {showChevron && <ChevronRight className="h-4 w-4 text-aerqvon-dim" />}
       </div>
     </Card>
   );

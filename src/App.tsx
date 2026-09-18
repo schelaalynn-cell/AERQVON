@@ -5,6 +5,7 @@ import { RouterProvider, useRouter } from '@/context/RouterContext';
 import { useUi } from '@/hooks/useUi';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useTheme } from '@/hooks/useTheme';
+import { startMarketRefresh } from '@/services/market/marketRefreshService';
 import { BottomNav } from '@/components/BottomNav';
 import { Onboarding } from '@/screens/Onboarding';
 import { AuthScreen } from '@/screens/AuthScreen';
@@ -58,8 +59,8 @@ function AuthGate() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-nova-bg text-nova-text">
-        <div className="text-sm text-nova-muted">Loading AERQVON…</div>
+      <div className="flex min-h-screen items-center justify-center bg-aerqvon-bg text-aerqvon-text">
+        <div className="text-sm text-aerqvon-muted">Loading AERQVON…</div>
       </div>
     );
   }
@@ -74,6 +75,8 @@ function AuthGate() {
 }
 
 function AppContent() {
+  useEffect(() => startMarketRefresh(), []);
+
   const { onboarded, completeOnboarding } = useOnboarding();
   const { route } = useRouter();
   const showBottomNav = route.name === 'tab';
@@ -81,7 +84,7 @@ function AppContent() {
   if (!onboarded) return <Onboarding onComplete={completeOnboarding} />;
 
   return (
-    <div className="min-h-screen bg-nova-bg text-nova-text">
+    <div className="min-h-screen bg-aerqvon-bg text-aerqvon-text">
       <div className="mx-auto min-h-screen max-w-md">
         <ScreenRouter />
       </div>

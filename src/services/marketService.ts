@@ -7,6 +7,10 @@ import type {
 } from '@/types';
 import { ASSETS } from './walletService';
 import { liveMarketData } from './market/LiveMarketDataService';
+import {
+  setMarketQuote,
+  setMarketQuoteUnavailable,
+} from './market/marketState';
 
 export const CHART_INTERVALS = [
   { label: '5m', value: '5m' },
@@ -118,7 +122,7 @@ function getPair(symbol: string): TradingPair | undefined {
   return getTradingPairs().find((pair) => pair.symbol === symbol);
 }
 
-async function fetchTradingPairsAsync(): Promise<TradingPair[]> {
+export async function fetchTradingPairsAsync(): Promise<TradingPair[]> {
   const pairs = getTradingPairs();
 
   const livePairs = await Promise.all(
@@ -126,10 +130,40 @@ async function fetchTradingPairsAsync(): Promise<TradingPair[]> {
       if (pair.status !== 'live') return pair;
 
       const binanceSymbol = liveMarketData.getBinanceSymbol(pair.symbol);
-      if (!binanceSymbol) return pair;
+
+      if (!binanceSymbol) {
+        setMarketQuoteUnavailable(
+          pair.baseAsset,
+          pair.symbol,
+          'BINANCE',
+          `No Binance symbol mapping exists for ${pair.symbol}.`,
+        );
+        return pair;
+      }
 
       const ticker = await liveMarketData.fetchBinanceTicker(binanceSymbol);
-      if (!ticker) return pair;
+
+      if (!ticker) {
+        setMarketQuoteUnavailable(
+          pair.baseAsset,
+          pair.symbol,
+          'BINANCE',
+          `Live Binance ticker is unavailable for ${pair.symbol}.`,
+        );
+        return pair;
+      }
+
+      setMarketQuote({
+        assetId: pair.baseAsset,
+        symbol: pair.symbol,
+        priceUsd: ticker.lastPrice,
+        change24h: ticker.change24h,
+        high24h: ticker.high24h,
+        low24h: ticker.low24h,
+        volume24h: ticker.volume24h,
+        status: 'LIVE',
+        source: 'BINANCE',
+      });
 
       return {
         ...pair,
@@ -148,7 +182,6 @@ async function fetchTradingPairsAsync(): Promise<TradingPair[]> {
 
   return livePairs;
 }
-
 
 function isDemoPair(symbol: string): boolean {
   return symbol === AQV_DEMO_PAIR.symbol;
@@ -276,6 +309,14 @@ async function fetchCandlesticksAsync(
   }
 
   return candles;
+}
+
+function subscribeToKlineStream(
+  symbol: string,
+  interval: string,
+  onCandle: (candle: Candlestick) => void,
+): () => void {
+  return liveMarketData.subscribeToKlineStream(symbol, interval, onCandle);
 }
 
 function getDemoOrderBook(
@@ -515,6 +556,7 @@ export const marketService = {
   getPair,
   getCandlesticks,
   fetchCandlesticksAsync,
+  subscribeToKlineStream,
   fetchOrderBookAsync,
   fetchRecentTradesAsync,
   formatUsd,

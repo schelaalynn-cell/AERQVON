@@ -55,13 +55,36 @@ async function fetchCoinGeckoPrices(assetIds: string[]): Promise<Map<string, Coi
 
 async function fetchBinanceTicker(binanceSymbol: string): Promise<{ lastPrice: number; change24h: number; high24h: number; low24h: number; volume24h: number } | null> {
   try {
-    const resp = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`);
-    if (!resp.ok) return null;
-    const json = await resp.json();
-    return { lastPrice: parseFloat(json.lastPrice), change24h: parseFloat(json.priceChangePercent), high24h: parseFloat(json.highPrice), low24h: parseFloat(json.lowPrice), volume24h: parseFloat(json.quoteVolume) };
-  } catch { return null; }
-}
+    if (!config.marketDataApiUrl) return null;
 
+    const url = `${config.marketDataApiUrl}/market-data?type=ticker&market=spot&symbol=${encodeURIComponent(binanceSymbol)}`;
+
+    const resp = await fetch(url, {
+      headers: { accept: 'application/json' },
+    });
+
+    if (!resp.ok) return null;
+
+    const json = await resp.json();
+
+    if (
+      typeof json.lastPrice !== 'number' ||
+      !Number.isFinite(json.lastPrice)
+    ) {
+      return null;
+    }
+
+    return {
+      lastPrice: json.lastPrice,
+      change24h: Number.isFinite(json.change24h) ? json.change24h : 0,
+      high24h: Number.isFinite(json.high24h) ? json.high24h : json.lastPrice,
+      low24h: Number.isFinite(json.low24h) ? json.low24h : json.lastPrice,
+      volume24h: Number.isFinite(json.volume24h) ? json.volume24h : 0,
+    };
+  } catch {
+    return null;
+  }
+}
 async function fetchBinanceKlines(binanceSymbol: string, interval: string, limit: number): Promise<Candlestick[]> {
   try {
     const mapped = INTERVAL_MAP[interval] ?? '1h';
@@ -84,22 +107,107 @@ async function fetchBinanceKlines(binanceSymbol: string, interval: string, limit
 
 async function fetchBinanceOrderBook(binanceSymbol: string, limit: number): Promise<OrderBook> {
   try {
-    const resp = await fetch(`https://api.binance.com/api/v3/depth?symbol=${binanceSymbol}&limit=${limit}`);
-    if (!resp.ok) return { bids: [], asks: [] };
-    const json = await resp.json();
-    const bids: [number, number][] = (json.bids ?? []).map((b: string[]) => [parseFloat(b[0]), parseFloat(b[1])]);
-    const asks: [number, number][] = (json.asks ?? []).map((a: string[]) => [parseFloat(a[0]), parseFloat(a[1])]);
-    return { bids, asks };
-  } catch { return { bids: [], asks: [] }; }
-}
+    if (!config.marketDataApiUrl) {
+      return { bids: [], asks: [] };
+    }
 
+    const safeLimit = Math.max(1, Math.min(Math.floor(limit), 1000));
+
+    const url =
+      `${config.marketDataApiUrl}/market-data` +
+      `?type=orderbook&market=spot` +
+      `&symbol=${encodeURIComponent(binanceSymbol)}` +
+      `&limit=${safeLimit}`;
+
+    const resp = await fetch(url, {
+      headers: { accept: 'application/json' },
+    });
+
+    if (!resp.ok) {
+      return { bids: [], asks: [] };
+    }
+
+    const json = await resp.json();
+
+    const bids: [number, number][] = Array.isArray(json.bids)
+      ? json.bids
+          .filter(
+            (level: unknown): level is [number, number] =>
+              Array.isArray(level) &&
+              level.length >= 2 &&
+              Number.isFinite(Number(level[0])) &&
+              Number.isFinite(Number(level[1])),
+          )
+          .map((level: [number, number]) => [Number(level[0]), Number(level[1])] as [number, number])
+      : [];
+
+    const asks: [number, number][] = Array.isArray(json.asks)
+      ? json.asks
+          .filter(
+            (level: unknown): level is [number, number] =>
+              Array.isArray(level) &&
+              level.length >= 2 &&
+              Number.isFinite(Number(level[0])) &&
+              Number.isFinite(Number(level[1])),
+          )
+          .map((level: [number, number]) => [Number(level[0]), Number(level[1])] as [number, number])
+      : [];
+
+    return { bids, asks };
+  } catch {
+    return { bids: [], asks: [] };
+  }
+}
 async function fetchBinanceRecentTrades(binanceSymbol: string, limit: number): Promise<{ price: number; amount: number; time: number; isBuyerMaker: boolean }[]> {
   try {
-    const resp = await fetch(`https://api.binance.com/api/v3/trades?symbol=${binanceSymbol}&limit=${limit}`);
+    if (!config.marketDataApiUrl) return [];
+
+    const safeLimit = Math.max(1, Math.min(Math.floor(limit), 1000));
+
+    const url =
+      `${config.marketDataApiUrl}/market-data` +
+      `?type=trades&market=spot` +
+      `&symbol=${encodeURIComponent(binanceSymbol)}` +
+      `&limit=${safeLimit}`;
+
+    const resp = await fetch(url, {
+      headers: { accept: 'application/json' },
+    });
+
     if (!resp.ok) return [];
+
     const json = await resp.json();
-    return (json ?? []).map((t: { price: string; qty: string; time: number; isBuyerMaker: boolean }) => ({ price: parseFloat(t.price), amount: parseFloat(t.qty), time: t.time, isBuyerMaker: t.isBuyerMaker }));
-  } catch { return []; }
+
+    return Array.isArray(json.trades)
+      ? json.trades
+          .filter(
+            (trade: unknown): trade is {
+              price: number;
+              quantity: number;
+              time: number;
+              isBuyerMaker: boolean;
+            } =>
+              typeof trade === 'object' &&
+              trade !== null &&
+              Number.isFinite(Number((trade as { price?: unknown }).price)) &&
+              Number.isFinite(Number((trade as { quantity?: unknown }).quantity)) &&
+              Number.isFinite(Number((trade as { time?: unknown }).time)),
+          )
+          .map((trade: {
+            price: number;
+            quantity: number;
+            time: number;
+            isBuyerMaker: boolean;
+          }) => ({
+            price: Number(trade.price),
+            amount: Number(trade.quantity),
+            time: Number(trade.time),
+            isBuyerMaker: Boolean(trade.isBuyerMaker),
+          }))
+      : [];
+  } catch {
+    return [];
+  }
 }
 
 
@@ -120,9 +228,76 @@ export function subscribeToKlineStream(pairSymbol: string, interval: string, onC
   return () => socket.close();
 }
 
+export function subscribeToTickerStream(
+  pairSymbol: string,
+  onTicker: (ticker: {
+    lastPrice: number;
+    change24h: number;
+    high24h: number;
+    low24h: number;
+    volume24h: number;
+  }) => void,
+): () => void {
+  const binanceSymbol = BINANCE_SYMBOLS[pairSymbol];
+
+  if (!binanceSymbol || !config.supabaseUrl) {
+    return () => {};
+  }
+
+  const base = config.supabaseUrl
+    .replace(/^https:/, 'wss:')
+    .replace(/\/$/, '');
+
+  const socket = new WebSocket(
+    `${base}/functions/v1/market-stream?market=spot&symbol=${encodeURIComponent(
+      binanceSymbol,
+    )}&stream=ticker`,
+  );
+
+  socket.onmessage = (event) => {
+    try {
+      const message = JSON.parse(event.data);
+
+      if (message?.e !== '24hrTicker') return;
+
+      const lastPrice = Number(message.c);
+      const change24h = Number(message.P);
+      const high24h = Number(message.h);
+      const low24h = Number(message.l);
+      const volume24h = Number(message.v);
+
+      if (
+        !Number.isFinite(lastPrice) ||
+        !Number.isFinite(change24h) ||
+        !Number.isFinite(high24h) ||
+        !Number.isFinite(low24h) ||
+        !Number.isFinite(volume24h)
+      ) {
+        return;
+      }
+
+      console.log('[AERQVON][MARKET_TICKER]', {
+        symbol: binanceSymbol,
+        lastPrice,
+        change24h,
+      });
+
+      onTicker({
+        lastPrice,
+        change24h,
+        high24h,
+        low24h,
+        volume24h,
+      });
+    } catch {}
+  };
+
+  return () => socket.close();
+}
+
 export const liveMarketData = {
   fetchCoinGeckoPrices, fetchBinanceTicker, fetchBinanceKlines,
-  fetchBinanceOrderBook, fetchBinanceRecentTrades, subscribeToKlineStream,
+  fetchBinanceOrderBook, fetchBinanceRecentTrades, subscribeToKlineStream, subscribeToTickerStream,
   getBinanceSymbol: (pairSymbol: string) => BINANCE_SYMBOLS[pairSymbol] ?? null,
   getCoinGeckoId: (assetId: string) => COINGECKO_IDS[assetId] ?? null,
 };
