@@ -38,7 +38,7 @@ interface RecentTrade {
 }
 
 export function CEXTradeView() {
-  const { placeMarketOrder, placeLimitOrder, cancelOrder, openOrders, orderHistory, tradeHistory, realizedPnl, unrealizedPnl, lockedBalances } = useApp();
+  const { submitServerOrder, cancelOrder, openOrders, orderHistory, tradeHistory, realizedPnl, unrealizedPnl, lockedBalances } = useApp();
   const { haptic, hapticNotify } = useUi();
   const [pairSymbol, setPairSymbol] = useState('AQV/USDC');
   const [side, setSide] = useState<OrderSide>('buy');
@@ -129,15 +129,24 @@ export function CEXTradeView() {
     setExecState('review');
   };
 
-  const handleConfirmExecute = () => {
-    if (isProcessing) return; haptic('medium'); setExecState('processing'); setExecMessage('');
-    setTimeout(() => {
-      try {
-        if (orderType === 'market') { const order = placeMarketOrder(pairSymbol, side, numAmount); setExecMessage(`${side === 'buy' ? 'Buy' : 'Sell'} order filled: ${order.filledAmount?.toFixed(4) ?? numAmount.toFixed(4)} ${pair?.baseLabel ?? ''} @ ${order.filledPrice?.toFixed(price < 1 ? 4 : 2) ?? price.toFixed(price < 1 ? 4 : 2)}`); }
-        else { placeLimitOrder(pairSymbol, side, numAmount, parseFloat(limitPrice)); setExecMessage(`${side === 'buy' ? 'Buy' : 'Sell'} limit order placed at ${parseFloat(limitPrice).toFixed(price < 1 ? 4 : 2)}`); }
-        hapticNotify('success'); setExecState('success'); setAmount(''); setLimitPrice('');
-      } catch (err) { const msg = err instanceof Error ? err.message : 'Order execution failed'; setExecMessage(msg); setExecState('failed'); hapticNotify('error'); }
-    }, 1200);
+  const handleConfirmExecute = async () => {
+    if (isProcessing) return;
+    haptic('medium');
+    setExecState('processing');
+    setExecMessage('');
+    try {
+      const order = await submitServerOrder(pairSymbol, side, orderType, numAmount, orderType === 'limit' ? parseFloat(limitPrice) : undefined);
+      setExecMessage(`${side === 'buy' ? 'Buy' : 'Sell'} order accepted and queued by AERQVON. Order ID: ${order.id}`);
+      hapticNotify('success');
+      setExecState('success');
+      setAmount('');
+      setLimitPrice('');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Order submission failed';
+      setExecMessage(msg);
+      setExecState('failed');
+      hapticNotify('error');
+    }
   };
 
   const handleDismissResult = () => { haptic('light'); setExecState('idle'); setExecMessage(''); setError(''); };
