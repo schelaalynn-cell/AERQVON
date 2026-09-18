@@ -190,7 +190,7 @@ export type ThemeMode = 'dark' | 'light' | 'system';
 
 export type OrderSide = 'buy' | 'sell';
 export type OrderType = 'market' | 'limit';
-export type OrderStatus = 'open' | 'filled' | 'cancelled' | 'partial';
+export type OrderStatus = 'queued' | 'open' | 'filled' | 'cancelled' | 'partial';
 
 export interface TradingPair {
   symbol: string;
