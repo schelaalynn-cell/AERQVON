@@ -24,7 +24,7 @@ export const config = {
   supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY ?? '',
   tonRpcUrl: import.meta.env.VITE_TON_RPC_URL ?? 'https://toncenter.com/api/v2',
   tonApiKey: import.meta.env.VITE_TON_API_KEY ?? '',
-  marketDataApiUrl: import.meta.env.VITE_MARKET_DATA_API_URL ?? '',
+  marketDataApiUrl: import.meta.env.VITE_MARKET_DATA_API_URL ?? (import.meta.env.VITE_SUPABASE_URL ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1` : ''),
 } as const;
 
 export type AppConfig = typeof config;
