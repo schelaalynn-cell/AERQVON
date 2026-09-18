@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
-import { getCurrentSession, onAuthStateChange, signInWithPassword, signOut, signUpWithPassword } from '@/services/authService';
+import { getCurrentSession, onAuthStateChange, signInWithGoogle, signInWithPassword, signOut, signUpWithPassword } from '@/services/authService';
 import { getAqvUserId } from '@/services/aqvUserService';
 
 interface AuthContextValue {
@@ -9,6 +9,7 @@ interface AuthContextValue {
   loading: boolean;
   aqvUserId: string | null;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signInWithGoogle: () => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null; needsEmailConfirmation: boolean }>;
   signOut: () => Promise<{ error: Error | null }>;
 }
@@ -80,6 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     aqvUserId,
     signIn: async (email, password) => {
       const { error } = await signInWithPassword(email, password);
+      return { error: normalizeError(error) };
+    },
+    signInWithGoogle: async () => {
+      const { error } = await signInWithGoogle();
       return { error: normalizeError(error) };
     },
     signUp: async (email, password) => {
