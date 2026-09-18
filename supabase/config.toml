@@ -1,0 +1,14 @@
+[functions.market-data]
+verify_jwt = false
+
+[functions.market-stream]
+verify_jwt = false
+
+[functions.trading-order]
+verify_jwt = true
+
+[functions.telegram-webhook]
+verify_jwt = false
+
+[functions.telegram-link]
+verify_jwt = true
