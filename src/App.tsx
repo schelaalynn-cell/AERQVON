@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { AppProvider } from '@/context/AppContext';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { RouterProvider, useRouter } from '@/context/RouterContext';
@@ -94,11 +95,14 @@ function App() {
   useTheme();
 
   return (
-    <AuthProvider>
-      <RouterProvider>
-        <AuthGate />
-      </RouterProvider>
-    </AuthProvider>
+    <>
+      <AuthProvider>
+        <RouterProvider>
+          <AuthGate />
+        </RouterProvider>
+      </AuthProvider>
+      <SpeedInsights />
+    </>
   );
 }
 
